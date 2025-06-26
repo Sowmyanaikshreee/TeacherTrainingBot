@@ -221,6 +221,9 @@ async def list_uploaded_files():
 from fastapi.responses import StreamingResponse
 from fpdf import FPDF
 import io
+from collections import defaultdict
+from fpdf import FPDF
+
  
 # --- Utility Functions ---
 def clean_extracted_text(text: str) -> str:
@@ -235,6 +238,10 @@ def sanitize_text(text: str) -> str:
 @app.post("/generate_pdf")
 async def generate_pdf(data: dict):
     category = data["category"]
+    subject = category.replace("_", " ").title()
+    main_title = f"Assessment -  {subject}"
+    heading_name_line = "Name: ____________________         Date: ____________________"
+
     file_name = data["file"]
     level = data.get("level", "medium")
 
@@ -265,12 +272,27 @@ async def generate_pdf(data: dict):
     cleaned_text = "\n".join(content_lines)
     trimmed_text = cleaned_text[1000:4000] if len(cleaned_text) > 4000 else cleaned_text
 
-    all_questions = []
+    # Question grouping
+    mark_weights = {
+        "MCQ": 1,
+        "FILL": 1,
+        "SHORT": 2,
+        "LONG": 5,
+    }
+
+    section_titles = {
+        "MCQ": "Multiple Choice Questions",
+        "FILL": "Fill in the Blanks",
+        "SHORT": "Short Answer Questions",
+        "LONG": "Long Answer Questions",
+    }
+
+    sectioned_questions = defaultdict(list)
     generated_questions = set()
 
     for qtype, count in counts.items():
         for i in range(count):
-            # === Prompt per question type ===
+            q_upper = qtype.upper()
             if qtype.lower() == "fill":
                 prompt = f"""
 You are an exam question generator.
@@ -319,46 +341,43 @@ Only return the question.
 """
             elif qtype.lower() == "mcq":
                 prompt = f"""
-            You are an exam question generator.
+You are an exam question generator.
 
-            TASK:
-            Generate one multiple-choice question at {level.upper()} difficulty from the content below.
+TASK:
+Generate one multiple-choice question at {level.upper()} difficulty from the content below.
 
-            The output should be structured like this (exactly):
+The output should be structured like this (exactly):
 
-            Question: <your question text here>
-            A. Option A
-            B. Option B
-            C. Option C
-            D. Option D
+Question: <your question text here>
+A. Option A
+B. Option B
+C. Option C
+D. Option D
 
-            ⚠️ Rules:
-            - Do NOT include the correct answer
-            - Do NOT explain the question or options
-            - Keep question short and relevant to the content
+⚠️ Rules:
+- Do NOT include the correct answer
+- Do NOT explain the question or options
+- Keep question short and relevant to the content
 
-            CONTENT:
-            ---------------------
-            {trimmed_text}
-            ---------------------
-            Return only the question and 4 options in the exact format shown.
-            """
+CONTENT:
+---------------------
+{trimmed_text}
+---------------------
+Return only the question and 4 options in the exact format shown.
+"""
             else:
                 prompt = f"Generate a unique question from this content:\n{trimmed_text}"
 
-            # === Generate Question and Avoid Duplicates ===
             try:
                 response = model.generate_content(prompt)
                 question = response.text.strip()
 
-                # Add blank if missing for FIB
-                if qtype.lower() == "fill" and "____" not in question:
+                if q_upper == "FILL" and "____" not in question:
                     if len(question.split()) > 5:
                         question = " ".join(question.split()[:-1]) + " __________"
                     else:
                         question += " __________"
 
-                # Retry if duplicate
                 attempt = 0
                 while question in generated_questions and attempt < 2:
                     response = model.generate_content(prompt)
@@ -366,26 +385,58 @@ Only return the question.
                     attempt += 1
 
                 if not question or question in generated_questions:
-                    question = f"[No unique question returned for {qtype.upper()} #{i+1}]"
+                    question = f"[No unique question returned for {q_upper} #{i+1}]"
                 else:
                     generated_questions.add(question)
 
             except Exception as e:
-                question = f"[Error generating {qtype.upper()} #{i+1}]: {e}"
+                question = f"[Error generating {q_upper} #{i+1}]: {e}"
 
-            all_questions.append((qtype.upper(), question))
+            sectioned_questions[q_upper].append(question)
 
-    # === Build PDF ===
+    # === Build PDF with Section Headings ===
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
 
-    for idx, (qtype, question) in enumerate(all_questions, 1):
-        safe_text = sanitize_text(f"{idx}. [{qtype}] {question}")
-        pdf.multi_cell(0, 10, safe_text)
+    # Add Assessment Heading
+    # Add Assessment Heading + Name/Date placeholders
+    pdf.set_font("Arial", "B", 14)
+    pdf.cell(0, 10, main_title, ln=True, align="C")
+    pdf.ln(5)
+
+    pdf.set_font("Arial", "", 12)
+    pdf.cell(0, 10, heading_name_line, ln=True)
+    pdf.ln(10)
+
+
+    pdf.set_font("Arial", size=12)
+    question_number = 1
+
+
+    for qtype in ["MCQ", "FILL", "SHORT", "LONG"]:
+        questions = sectioned_questions.get(qtype, [])
+        if not questions:
+            continue
+
+        marks_per_q = mark_weights[qtype]
+        total_marks = len(questions) * marks_per_q
+        section_title = f"{section_titles[qtype]} ({len(questions)} × {marks_per_q} = {total_marks})"
+
+        pdf.set_font("Arial", "B", 12)
+        pdf.multi_cell(0, 10, section_title)
         pdf.ln(2)
 
-    pdf_output = pdf.output(dest='S').encode('latin1')
+        pdf.set_font("Arial", "", 12)
+        for q in questions:
+            safe_text = sanitize_text(f"{question_number}. {q}")
+            pdf.multi_cell(0, 10, safe_text)
+            pdf.ln(2)
+            question_number += 1
+
+        pdf.ln(4)
+
+    pdf_output = pdf.output(dest='S').encode('latin-1', 'replace')
+
     pdf_bytes = io.BytesIO(pdf_output)
 
     return StreamingResponse(pdf_bytes, media_type="application/pdf", headers={
@@ -747,7 +798,12 @@ async def general_chat(question: str = Form(...)):
 
 @app.post("/generate_text")
 async def generate_text(data: dict):
+    from collections import defaultdict
+
     category = data["category"]
+    subject = category.replace("_", " ").title()
+    main_title = f"Assessment -  {subject}"
+    heading_name_line = "Name: ____________________         Date: ____________________"
     file_name = data["file"]
     level = data.get("level", "medium")
 
@@ -766,7 +822,6 @@ async def generate_text(data: dict):
     if not raw_text.strip():
         return JSONResponse(status_code=400, content={"error": "No extractable content in PDF."})
 
-    # Clean and process the text (same logic as PDF)
     text = clean_extracted_text(raw_text)
     lines = text.split('\n')
     skip_phrases = ["acknowledgment", "copyright", "preface", "author",
@@ -778,11 +833,26 @@ async def generate_text(data: dict):
     cleaned_text = "\n".join(content_lines)
     trimmed_text = cleaned_text[1000:4000] if len(cleaned_text) > 4000 else cleaned_text
 
-    all_questions = []
+    mark_weights = {
+        "MCQ": 1,
+        "FILL": 1,
+        "SHORT": 2,
+        "LONG": 5,
+    }
+
+    section_titles = {
+        "MCQ": "Multiple Choice Questions",
+        "FILL": "Fill in the Blanks",
+        "SHORT": "Short Answer Questions",
+        "LONG": "Long Answer Questions",
+    }
+
+    sectioned_questions = defaultdict(list)
     generated_questions = set()
 
     for qtype, count in counts.items():
         for i in range(count):
+            q_upper = qtype.upper()
             if qtype.lower() == "fill":
                 prompt = f"""
 You are an exam question generator.
@@ -836,18 +906,24 @@ You are an exam question generator.
 TASK:
 Generate one multiple-choice question at {level.upper()} difficulty from the content below.
 
-The output should be structured like this:
+The output should be structured like this (exactly):
 
-Question: <your question>
+Question: <your question text here>
 A. Option A
 B. Option B
 C. Option C
 D. Option D
 
+⚠️ Rules:
+- Do NOT include the correct answer
+- Do NOT explain the question or options
+- Keep question short and relevant to the content
+
 CONTENT:
 ---------------------
 {trimmed_text}
 ---------------------
+Return only the question and 4 options in the exact format shown.
 """
             else:
                 prompt = f"Generate a unique question from this content:\n{trimmed_text}"
@@ -856,8 +932,11 @@ CONTENT:
                 response = model.generate_content(prompt)
                 question = response.text.strip()
 
-                if qtype.lower() == "fill" and "____" not in question:
-                    question += " __________"
+                if q_upper == "FILL" and "____" not in question:
+                    if len(question.split()) > 5:
+                        question = " ".join(question.split()[:-1]) + " __________"
+                    else:
+                        question += " __________"
 
                 attempt = 0
                 while question in generated_questions and attempt < 2:
@@ -866,22 +945,139 @@ CONTENT:
                     attempt += 1
 
                 if not question or question in generated_questions:
-                    question = f"[No unique question returned for {qtype.upper()} #{i+1}]"
+                    question = f"[No unique question returned for {q_upper} #{i+1}]"
                 else:
                     generated_questions.add(question)
 
             except Exception as e:
-                question = f"[Error generating {qtype.upper()} #{i+1}]: {e}"
+                question = f"[Error generating {q_upper} #{i+1}]: {e}"
 
-            all_questions.append(f"[{qtype.upper()}] {question}")
+            sectioned_questions[q_upper].append(question)
 
-    # Join all questions into plain text
-    text_output = "\n\n".join(f"{i+1}. {q}" for i, q in enumerate(all_questions))
+    # === Build final output string with sections ===
+    output_lines = []
+    question_number = 1
 
-    return JSONResponse(content={"text": text_output})
+    for qtype in ["MCQ", "FILL", "SHORT", "LONG"]:
+        questions = sectioned_questions.get(qtype, [])
+        if not questions:
+            continue
+
+        marks_per_q = mark_weights[qtype]
+        total_marks = len(questions) * marks_per_q
+        section_title = f"{section_titles[qtype]} ({len(questions)} × {marks_per_q} = {total_marks})"
+        output_lines.append(section_title)
+        output_lines.append("")
+
+        for q in questions:
+            output_lines.append(f"{question_number}. {q}")
+            question_number += 1
+        output_lines.append("")  # spacing
+
+        
+    output_lines.insert(0, "")
+    output_lines.insert(0, heading_name_line)
+    output_lines.insert(0, main_title)
 
 
 
+    return {"text": "\n".join(output_lines).strip()}
 
- 
+
+# Upload Assessment part
+
+import pytesseract
+pytesseract.pytesseract.tesseract_cmd = r"C:\Users\Sowmyashree\AppData\Local\Programs\Tesseract-OCR"
+from PIL import Image
+import fitz  # PyMuPDF for PDF image extraction
+
+from fastapi import UploadFile, File, Form
+from fpdf import FPDF
+import tempfile
+
+@app.post("/upload_student_assessment/")
+async def upload_student_assessment(file: UploadFile = File(...), category: str = Form(...)):
+    import tempfile
+    try:
+        import pytesseract
+        from PIL import Image
+        import fitz  # PyMuPDF
+
+        # SET PATH FOR WINDOWS
+        pytesseract.pytesseract.tesseract_cmd = r"C:\Users\Sowmyashree\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+
+        temp_dir = tempfile.mkdtemp()
+        input_path = os.path.join(temp_dir, file.filename)
+
+        with open(input_path, "wb") as f:
+            f.write(await file.read())
+
+        extracted_text = ""
+
+        if file.filename.lower().endswith(".pdf"):
+            doc = fitz.open(input_path)
+            for page in doc:
+                pix = page.get_pixmap()
+                img_path = os.path.join(temp_dir, f"page_{page.number}.png")
+                pix.save(img_path)
+                img = Image.open(img_path)
+                extracted_text += pytesseract.image_to_string(img)
+        else:
+            img = Image.open(input_path)
+            extracted_text = pytesseract.image_to_string(img)
+
+        if not extracted_text.strip():
+            return {"error": "No readable text found in the uploaded file."}
+
+        if category not in category_indexes:
+            return {"error": "Category not found. Upload a document first."}
+
+        _, chunk_store = category_indexes.get(category)
+        material = "\n".join(chunk_store)[-3000:]
+
+        prompt = f"""
+You are a teacher assistant. Evaluate the following student answer against the study material below.
+
+=== STUDENT ANSWER ===
+{extracted_text}
+=== MATERIAL ===
+{material}
+=== END ===
+
+Give detailed feedback on:
+- Content correctness
+- Clarity
+- Completeness
+- Suggested improvements
+
+Return the feedback as plain text.
+"""
+
+        response = model.generate_content(prompt)
+        feedback = response.text.strip()
+
+        class FeedbackPDF(FPDF):
+            def header(self):
+                self.set_font("Arial", "B", 14)
+                self.cell(0, 10, "Assessment Feedback", ln=True, align="C")
+                self.ln(5)
+
+            def add_feedback(self, text):
+                safe_text = text.encode("latin-1", "replace").decode("latin-1")
+                self.set_font("Arial", "", 12)
+                self.multi_cell(0, 10, safe_text)
+
+        pdf = FeedbackPDF()
+        pdf.add_page()
+        pdf.add_feedback(feedback)
+
+        pdf_bytes = pdf.output(dest="S").encode("latin1")
+        return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf", headers={
+            "Content-Disposition": "attachment; filename=feedback.pdf"
+        })
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()  # Print full error in terminal
+        return JSONResponse(status_code=500, content={"error": str(e)})
 

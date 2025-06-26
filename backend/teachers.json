@@ -47,5 +47,12 @@
     "password": "$2b$12$0ozlMAszOo4HhEYcOY3J4ejY1EoGKjQpeF/FhFPGLFlwCJAH9CgQ2",
     "grade": "10",
     "subject": "ComputerScience"
+  },
+  {
+    "name": "Karanji",
+    "email": "karanji@example.com",
+    "password": "$2b$12$LHH/K1yep9RkMwM5g63Wf.yByuav56modXAn6k65laGUEt9eUXx9.",
+    "grade": "8",
+    "subject": "ComputerScience"
   }
 ]
