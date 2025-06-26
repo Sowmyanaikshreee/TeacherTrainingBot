@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload PDFs by Category</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+    }
+ 
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #4a9bd8, #66c2ff);
+      padding: 12px 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+ 
+    .logo img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: white;
+      padding: 4px;
+    }
+ 
+      .nav-links a {
+        margin: 0 15px;
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        position: relative;
+      }
+ 
+ 
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 100%;
+      height: 2px;
+      background: white;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+ 
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+    }
+ 
+    .buttons {
+      display: flex;
+      gap: 12px;
+    }
+ 
+    .btn {
+      background: white;
+      color: #4a9bd8;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+ 
+    .btn:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+ 
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #ffffffcc;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      max-height: 85vh;
+    }
+ 
+    h2 {
+      text-align: center;
+      color: #012141;
+    }
+ 
+    label {
+      font-weight: 600;
+      display: block;
+      margin: 20px 0 8px;
+      color: #2c3e50;
+    }
+ 
+    select, input[type="file"] {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+    }
+ 
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #4a9bd8, #66c2ff);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s;
+    }
+ 
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+ 
+    .category-section {
+      margin-bottom: 30px;
+      background: #f8f9fc;
+      padding: 20px;
+      border-radius: 16px;
+    }
+ 
+    .category-section h4 {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 16px;
+      color: #012141;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+ 
+    ul.file-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+ 
+    li.file-entry {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.2s ease;
+    }
+ 
+    li.file-entry:hover {
+      transform: translateY(-2px);
+    }
+ 
+    .file-entry a {
+      display: flex;
+      align-items: center;
+      color: #1d4ed8;
+      font-weight: 500;
+      text-decoration: none;
+      gap: 10px;
+    }
+ 
+    .file-entry a i {
+      color: #e74c3c;
+      font-size: 18px;
+    }
+ 
+    .delete-btn {
+      width: 32px;
+      height: 32px;
+      background: radial-gradient(circle at center, #ff6b6b, #c0392b);
+      border: none;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+ 
+    .delete-btn i {
+      font-size: 14px;
+    }
+ 
+    .delete-btn:hover {
+      transform: scale(1.1);
+      background: radial-gradient(circle at center, #ff8787, #a93226);
+    }
+ 
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 20px;
+      }
+ 
+      h2 {
+        font-size: 24px;
+      }
+ 
+      .buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+ 
+<body>
+  <header class="navbar">
+    <div class="logo">
+      <img src="images/Aibot 1.jpg" alt="Bot Logo" />
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="#features">About</a>
+      <a href="#contact">Contact Us</a>
+    </nav>
+    <div class="buttons">
+      <a href="admin_login.html" class="btn"><i class="fas fa-user-shield"></i> Admin</a>
+      <a href="user_login.html" class="btn"><i class="fas fa-user-graduate"></i> User</a>
+    </div>
+  </header>
+ 
+  <div class="container">
+    <h2><i class="fas fa-file-upload" style="color: #667eea; margin-right: 10px;"></i>Upload PDF by Class</h2>
+ 
+    <label for="classSelect">Select Category:</label>
+    <select id="classSelect">
+      <option value="class_8">Class 8</option>
+      <option value="class_9">Class 9</option>
+      <option value="class_10">Class 10</option>
+    </select>
+
+    <label for="subjectSelect">Select Subject:</label>
+    <select id="subjectSelect">
+      <option value="Maths">Maths</option>
+      <option value="Science">Science</option>
+      <option value="ComputerScience">Computer Science</option>
+    </select>
+
+    <label for="pdfFile">Choose PDF File:</label>
+<input type="file" id="pdfFile" accept=".pdf" />
+<button id="uploadBtn">📤 Upload PDF</button>
+    
+    <!-- 2. Update the Uploaded Documents section -->
+<h3><i class="fas fa-folder-open" style="color: #667eea; margin-right: 10px;"></i>Uploaded Documents</h3>
+<div style="display: flex; gap: 20px; align-items: flex-start;">
+  <div style="flex: 1;">
+    <label for="filterClass">Filter by Class:</label>
+    <select id="filterClass" onchange="filterFiles()">
+      <option value="">-- All Classes --</option>
+      <option value="class_8">Class 8</option>
+      <option value="class_9">Class 9</option>
+      <option value="class_10">Class 10</option>
+    </select>
+  </div>
+  <div style="flex: 1;">
+    <label for="filterSubject">Filter by Subject:</label>
+    <select id="filterSubject" onchange="filterFiles()">
+      <option value="">-- All Subjects --</option>
+      <option value="Maths">Maths</option>
+      <option value="Science">Science</option>
+      <option value="ComputerScience">Computer Science</option>
+    </select>
+  </div>
+</div>
+<div id="fileList">Loading...</div>
+
+
+ 
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("uploadBtn")?.addEventListener("click", uploadFile);
+  fetchUploadedFiles();
+});
+
+let fullFileData = {};
+
+async function uploadFile() {
+  const fileInput = document.getElementById("pdfFile");
+  const classVal = document.getElementById("classSelect")?.value;
+  const subjectVal = document.getElementById("subjectSelect")?.value;
+  const uploadBtn = document.getElementById("uploadBtn");
+
+  if (!fileInput || fileInput.files.length === 0) {
+    alert("Please select a file.");
+    return;
+  }
+  if (!classVal || !subjectVal) {
+    alert("Please select both class and subject.");
+    return;
+  }
+
+  const folderKey = `${classVal}/${subjectVal}`;
+  uploadBtn.innerHTML = "Uploading...";
+  uploadBtn.disabled = true;
+
+  const formData = new FormData();
+  formData.append("file", fileInput.files[0]);
+  formData.append("category", folderKey);
+
+  try {
+    const res = await fetch("http://localhost:8000/upload/", {
+      method: "POST",
+      body: formData,
+    });
+    const result = await res.json();
+    alert(result.message);
+    fileInput.value = "";
+    fetchUploadedFiles();
+  } catch (err) {
+    alert("Upload failed.");
+    console.error(err);
+  } finally {
+    uploadBtn.innerHTML = "📤 Upload PDF";
+    uploadBtn.disabled = false;
+  }
+}
+
+async function fetchUploadedFiles() {
+  const fileList = document.getElementById("fileList");
+  fileList.innerHTML = "Loading...";
+
+  try {
+    const res = await fetch("http://localhost:8000/uploaded_files/");
+    const data = await res.json();
+    fullFileData = data.files_by_category || {};
+    renderFilteredFiles();
+  } catch (err) {
+    console.error("Failed to load files:", err);
+    fileList.innerHTML = "Error loading files.";
+  }
+}
+
+function filterFiles() {
+  renderFilteredFiles();
+}
+
+function renderFilteredFiles() {
+  const fileList = document.getElementById("fileList");
+  fileList.innerHTML = "";
+
+  const selectedClass = document.getElementById("filterClass")?.value;
+  const selectedSubject = document.getElementById("filterSubject")?.value;
+
+  const grouped = {};
+  for (const fullKey in fullFileData) {
+    const [classFolder, subjectFolder] = fullKey.split("/");
+    if (!grouped[classFolder]) grouped[classFolder] = {};
+    grouped[classFolder][subjectFolder] = fullFileData[fullKey];
+  }
+
+  for (const classKey in grouped) {
+    if (selectedClass && classKey !== selectedClass) continue;
+
+    for (const subjectKey in grouped[classKey]) {
+      if (!subjectKey || subjectKey === "undefined") continue; // 🛠️ Skip undefined subject
+      if (selectedSubject && subjectKey !== selectedSubject) continue;
+
+      const section = document.createElement("div");
+      section.className = "category-section";
+
+      const title = document.createElement("h4");
+      title.innerText = `${classKey.toUpperCase()} / ${subjectKey}`;
+      section.appendChild(title);
+
+      const ul = document.createElement("ul");
+      ul.className = "file-list";
+
+      grouped[classKey][subjectKey].forEach(fileName => {
+        const li = document.createElement("li");
+        li.className = "file-entry";
+        const folderKey = `${classKey}/${subjectKey}`;
+
+        li.innerHTML = `
+          <a href="http://localhost:8000/files/${folderKey}/${encodeURIComponent(fileName)}" target="_blank">
+            <i class="fas fa-file-pdf"></i> ${fileName}
+          </a>
+          <button class="delete-btn" onclick="deleteFile('${fileName}', '${folderKey}')">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        `;
+        ul.appendChild(li);
+      });
+
+      section.appendChild(ul);
+      fileList.appendChild(section);
+    }
+  }
+}
+
+ 
+    async function deleteFile(filename, category) {
+      const confirmed = confirm(`Are you sure you want to delete "${filename}"?`);
+      if (!confirmed) return;
+ 
+      try {
+        const deleteBtn = event.target.closest('.delete-btn');
+        if (deleteBtn) {
+          deleteBtn.innerHTML = '<span class="loading"></span>';
+          deleteBtn.disabled = true;
+        }
+ 
+        const res = await fetch(`http://localhost:8000/delete_file?filename=${encodeURIComponent(filename)}&category=${encodeURIComponent(category)}`, {
+          method: "DELETE"
+        });
+ 
+        const result = await res.json();
+        alert(result.message || "Deleted successfully.");
+        fetchUploadedFiles();
+      } catch (err) {
+        alert("Delete failed.");
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
+ 
+ 

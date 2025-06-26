@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practice Session - Question Bot</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f8fc;
+    }
+ 
+    body {
+      display: flex;
+    }
+ 
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      background: #4a90e2;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+ 
+    .sidebar .profile {
+      text-align: center;
+    }
+ 
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      border: 3px solid white;
+    }
+ 
+    .profile h3 {
+      font-size: 18px;
+    }
+ 
+    .profile p {
+      font-size: 13px;
+      color: #dceeff;
+    }
+ 
+    .nav-links {
+      margin-top: 30px;
+    }
+ 
+    .nav-links a {
+      display: block;
+      padding: 12px 16px;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+ 
+    .nav-links a.active,
+    .nav-links a:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+    .bottom-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+ 
+    .btn-link {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+ 
+    .btn-link:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+    .main {
+      margin-left: 240px;
+      width: calc(100% - 240px);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 20px 30px;
+    }
+ 
+    .navbar-title {
+      background-color: #f5f8fc;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #34495e;
+      padding: 20px 0 10px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+ 
+    .navbar-title::after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 3px;
+      background-color: #00d2ff;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+ 
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+ 
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+ 
+    .chat-msg {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: 20px;
+      font-size: 15px;
+      line-height: 1.4;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      word-break: break-word;
+    }
+ 
+    .chat-msg.user {
+      background: #d1e7ff;
+      align-self: flex-end;
+      text-align: right;
+    }
+ 
+    .chat-msg.bot {
+      background: #dff3d8;
+      align-self: flex-start;
+      text-align: left;
+      display: flex;
+      align-items: center;
+    }
+ 
+    .mute-btn {
+      margin-left: 10px;
+      font-size: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+ 
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 24px;
+      border-top: 1px solid #ddd;
+      background: #fefefe;
+    }
+ 
+    .chat-input select,
+    .chat-input input {
+      font-size: 15px;
+      border: 2px solid #dcdfe6;
+      border-radius: 30px;
+      padding: 12px 18px;
+      background: white;
+      outline: none;
+    }
+ 
+    .chat-input input {
+      flex: 1;
+    }
+ 
+    .chat-input select {
+      width: 120px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 14px;
+      padding-right: 38px;
+    }
+ 
+    .chat-input input:focus,
+    .chat-input select:focus {
+      border-color: #00d2ff;
+      box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.2);
+    }
+ 
+    .chat-input button {
+      background: #34495e;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+ 
+    .chat-input button:hover {
+      background: #2c3e50;
+    }
+ 
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+ 
+      .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+      }
+ 
+      .chat-input {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+ 
+      .chat-input select,
+      .chat-input input,
+      .chat-input button {
+        width: 100%;
+        border-radius: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div>
+      <div class="profile">
+        <img id="profile-photo" src="" alt="User" onerror="this.src='images/Aibot 1.jpg'" />
+        <h3 id="profile-name">User Name</h3>
+        <p id="profile-grade">Grade</p>
+        <p id="profile-subject">Subject</p>
+        <p id="profile-email">Email</p>
+      </div>
+      <div class="nav-links">
+        <a href="userHome.html"><i class="fas fa-home"></i> Home</a>
+        <a href="ai_chatbot.html"><i class="fas fa-robot"></i> AI Chatbot</a>
+        <a href="whiteBoard.html"><i class="fas fa-edit"></i> Whiteboards</a>
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="profile.html" class="btn-link"><i class="fas fa-user-circle"></i> Profile</a>
+      <a href="index.html" class="btn-link"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </aside>
+ 
+  <div class="main">
+    <div class="navbar-title">🧠 Practice Session - Question Bot</div>
+    <section class="chat-container">
+      <div id="chatBox" class="chat-box"></div>
+      <div class="chat-input">
+        <select id="fileSelect">
+          <option value="">Select File</option>
+        </select>
+        <button id="startBtn" title="Start Practice">▶</button>
+        <input id="textAnswer" type="text" placeholder="Type your answer..." />
+        <button id="textSendBtn" title="Send Answer">➤</button>
+        <button id="micBtn" title="Speak Answer">🎤</button>
+      </div>
+    </section>
+  </div>
+ 
+<!-- ... Keep your full <head> and <body> content as is, then scroll to your <script> tag and replace it with this: -->
+ 
+<script>
+const email = localStorage.getItem("userEmail") || "";
+const emailSafe = email.replace(/[@.]/g, "_");
+const imageUrl = `http://localhost:8000/profile_photos/${emailSafe}.jpg`;
+ 
+document.getElementById("profile-name").innerText = localStorage.getItem("userName") || "User";
+document.getElementById("profile-grade").innerText = "Grade: " + (localStorage.getItem("userGrade") || "-");
+document.getElementById("profile-subject").innerText = "Subject: " + (localStorage.getItem("userSubject") || "-");
+document.getElementById("profile-email").innerText = email || "-";
+document.getElementById("profile-photo").src = imageUrl;
+ 
+let currentQuestion = "";
+let selectedCategory = "";
+ 
+document.addEventListener("DOMContentLoaded", () => {
+  const fileSelect = document.getElementById("fileSelect");
+  const startBtn = document.getElementById("startBtn");
+  const sendBtn = document.getElementById("textSendBtn");
+  const textInput = document.getElementById("textAnswer");
+  const micBtn = document.getElementById("micBtn");
+ 
+  // Load files with categories
+  (async () => {
+  const fileSelect = document.getElementById("fileSelect");
+  const userGrade = localStorage.getItem("userGrade") || "";
+const userSubject = localStorage.getItem("userSubject") || "";
+const folderKey = `class_${userGrade}/${userSubject}`;
+
+try {
+  const res = await fetch("http://localhost:8000/uploaded_files/");
+  const data = await res.json();
+
+  if (data.files_by_category[folderKey]) {
+    data.files_by_category[folderKey].forEach(file => {
+      const opt = document.createElement("option");
+      opt.value = `${folderKey}||${file}`;
+      opt.textContent = `${file}`;
+      fileSelect.appendChild(opt);
+    });
+  } else {
+    const opt = document.createElement("option");
+    opt.textContent = "No files found for your class and subject.";
+    opt.disabled = true;
+    fileSelect.appendChild(opt);
+  }
+} catch (e) {
+  console.error("⚠️ Failed to load files list:", e);
+}
+})();
+
+ 
+  startBtn.addEventListener("click", () => {
+    const value = fileSelect.value;
+    if (!value) return alert("Please select a file.");
+    [selectedCategory] = value.split("||");
+    askQuestion();
+  });
+ 
+  sendBtn.addEventListener("click", () => {
+    const answer = textInput.value.trim();
+    if (answer) {
+      handleAnswer(answer);
+      textInput.value = "";
+    }
+  });
+ 
+  textInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      const answer = textInput.value.trim();
+      if (answer) {
+        handleAnswer(answer);
+        textInput.value = "";
+      }
+    }
+  });
+ 
+  if (micBtn && window.webkitSpeechRecognition) {
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = 'en-US';
+ 
+    micBtn.addEventListener("click", () => {
+      recognition.start();
+      micBtn.textContent = "🎙️";
+    });
+ 
+    recognition.onresult = (event) => {
+      const answer = event.results[0][0].transcript;
+      handleAnswer(answer);
+      micBtn.textContent = "🎤";
+    };
+ 
+    recognition.onerror = recognition.onend = () => {
+      micBtn.textContent = "🎤";
+    };
+  }
+});
+ 
+async function askQuestion() {
+  const chatBox = document.getElementById("chatBox");
+  const loadingMsg = document.createElement("div");
+  loadingMsg.className = "chat-msg bot";
+  loadingMsg.id = "loading-question";
+  loadingMsg.textContent = "Generating question...";
+  chatBox.appendChild(loadingMsg);
+  chatBox.scrollTop = chatBox.scrollHeight;
+ 
+  try {
+    const res = await fetch("http://localhost:8000/generate_question/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ category: selectedCategory }),
+    });
+ 
+    const data = await res.json();
+    currentQuestion = data.question || "No question generated.";
+    document.getElementById("loading-question")?.remove();
+    appendMessage(currentQuestion, "bot", true);
+  } catch {
+    document.getElementById("loading-question")?.remove();
+    appendMessage("Error generating question.", "bot");
+  }
+}
+ 
+async function handleAnswer(userAnswer) {
+  appendMessage(userAnswer, "user");
+ 
+  const res = await fetch("http://localhost:8000/evaluate_answer/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      question: currentQuestion,
+      answer: userAnswer,
+      category: selectedCategory,
+    }),
+  });
+ 
+  const data = await res.json();
+  const evaluation = data.evaluation || "No evaluation available.";
+ 
+  const utterance = new SpeechSynthesisUtterance(evaluation);
+  utterance.lang = 'en-US';
+  speechSynthesis.speak(utterance);
+ 
+  appendMessage(evaluation, "bot");
+ 
+  utterance.onend = () => {
+    askQuestion();
+  };
+}
+ 
+function appendMessage(msg, sender, speak = false) {
+  const chatBox = document.getElementById("chatBox");
+  const div = document.createElement("div");
+  div.className = `chat-msg ${sender}`;
+ 
+  if (sender === "bot") {
+    const span = document.createElement("span");
+    span.textContent = msg;
+ 
+    const muteBtn = document.createElement("button");
+    muteBtn.className = "mute-btn";
+    muteBtn.textContent = "🔊";
+ 
+    let isMuted = false;
+    let utterance = new SpeechSynthesisUtterance(msg);
+    utterance.lang = 'en-US';
+ 
+    if (speak) {
+      speechSynthesis.speak(utterance);
+    }
+ 
+    muteBtn.addEventListener("click", () => {
+      if (!isMuted) {
+        speechSynthesis.cancel();
+        isMuted = true;
+        muteBtn.textContent = "🔇";
+      } else {
+        isMuted = false;
+        utterance = new SpeechSynthesisUtterance(msg);
+        utterance.lang = 'en-US';
+        speechSynthesis.speak(utterance);
+        muteBtn.textContent = "🔊";
+      }
+    });
+ 
+    div.appendChild(span);
+    div.appendChild(muteBtn);
+  } else {
+    div.textContent = msg;
+  }
+ 
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+ 
+// ✅ Stop speech on page unload (navigation or refresh)
+window.addEventListener("beforeunload", () => {
+  speechSynthesis.cancel();
+});
+ 
+// ✅ Stop speech when clicking any <a> link
+document.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    speechSynthesis.cancel();
+  });
+});
+</script>
+ 
+ 
+</body>
+</html>

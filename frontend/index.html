@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Support Bot</title>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #ffffff;
+      color: #000;
+    }
+ 
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #4a9bd8, #66c2ff);
+      padding: 12px 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+ 
+    .logo img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: white;
+      padding: 4px;
+      animation: logoBounce 1s ease;
+    }
+ 
+    @keyframes logoBounce {
+      0% { transform: scale(0.8); opacity: 0; }
+      50% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+ 
+    .nav-links a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      position: relative;
+    }
+ 
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 100%;
+      height: 2px;
+      background: white;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+ 
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+    }
+ 
+    .buttons {
+      display: flex;
+      gap: 12px;
+    }
+ 
+    .btn {
+      background: white;
+      color: #4a9bd8;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+ 
+    .btn:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+ 
+    .hero-section {
+      text-align: center;
+      padding: 80px 20px;
+      background: linear-gradient(to right, #e0f7ff, #ffffff);
+      background-size: cover;
+      background-position: center;
+    }
+ 
+    .hero-section h1 {
+      font-size: 2.7rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+ 
+    .subtitle {
+      color: #4a9bd8;
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+ 
+    .guide-btn {
+      padding: 14px 28px;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #4a9bd8, #66c2ff);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+ 
+    .guide-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+ 
+    .features-section {
+      padding: 60px 40px;
+      background-color: #f9f9f9;
+    }
+ 
+    .row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+ 
+    .feature-card {
+      background: linear-gradient(to right, #4a9bd8, #66c2ff);
+      color: white;
+      padding: 30px;
+      border-radius: 25px;
+      width: 300px;
+      text-align: center;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+ 
+    .feature-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+ 
+    .feature-card h3 {
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+    }
+ 
+    .feature-card p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+ 
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+ 
+    @media (max-width: 768px) {
+      .hero-section h1 {
+        font-size: 2rem;
+      }
+ 
+      .feature-card {
+        width: 90%;
+      }
+ 
+      .buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">
+      <img src="images/Aibot 1.jpg" alt="Bot Logo" />
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="#features">About</a>
+       <a href="#contact">Contact Us</a>
+    </nav>
+        <div class="buttons">
+        <a href="admin_login.html" class="btn"><i class="fas fa-user-shield"></i> Admin</a>
+        <a href="user_login.html" class="btn"><i class="fas fa-user-graduate"></i> User</a>
+        </div>
+  </header>
+ 
+  <main class="hero-section" data-aos="fade-up">
+    <h1>Empowering Teachers with Intelligent<br />Support, Anytime. Anywhere.</h1>
+    <p class="subtitle">Your Teaching Companion - From Content to Classroom</p>
+    <button class="guide-btn"><i class="fas fa-arrow-circle-right"></i> Guide Me In</button>
+  </main>
+ 
+ <section class="features-section" id="features">
+
+    <div class="row">
+      <div class="feature-card" data-aos="fade-up">
+        <h3>📄 Lesson Plan Builder</h3>
+        <p>AI-powered templates to build customized, standards-aligned lesson plans fast!</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+        <h3>📝 Assessment Builder</h3>
+        <p>Generate custom tests in minutes! Select grade, content, and question types → download ready-to-print assessments.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+        <h3>📤 Homework Upload</h3>
+        <p>Bot checks student work! Just upload PDFs, wake up to evaluated submissions.</p>
+      </div>
+    </div>
+ 
+    <div class="row">
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+        <h3>🤖 Practice Session</h3>
+        <p>Practice with AI! Answer voice/text questions, get instant evaluations, and improve with personalized feedback.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+        <h3>🔔 Ask Content Question</h3>
+        <p>Ask any question by voice or text – get instant, grade-specific answers from AI!</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+        <h3> ▶️ Youtube Assistant</h3>
+        <p>Explore and understand YouTube videos faster with automatic search and summarization.</p>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+        <h3>🧾 Summarize Content and Image</h3>
+        <p>Summarize text or images instantly. Just drop it in - get clear insights fast!</p>
+      </div>
+     
+    </div>
+  </section>
+
+  <section id="contact" style="padding: 60px 40px; background-color: #f5f7fa;">
+  <h2 style="text-align: center; font-size: 2.2rem; color: #012141; margin-bottom: 40px;"> Contact Us</h2>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 40px; justify-content: center;">
+    <!-- Google Map -->
+    <div style="flex: 1 1 400px; min-height: 400px;">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3889.437939966387!2d74.83758622489138!3d12.879537187427374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba35a44dbf66aff%3A0x57d859744e9400c3!2sEmpire%20Mall%20parking!5e0!3m2!1sen!2sin!4v1750314823052!5m2!1sen!2sin"
+        width="100%"
+        height="100%"
+        style="border:0; border-radius: 12px;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+
+    <!-- Contact Form -->
+<div style="flex: 1 1 400px;">
+  <form action="https://formsubmit.co/sowmyashree@karanji.com" method="POST" style="display: flex; flex-direction: column; gap: 18px;">
+    <!-- Disable CAPTCHA and redirect after submission -->
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_next" value="https://yourwebsite.com/thank-you.html">
+
+    <label><strong>Name *</strong></label>
+    <input type="text" name="Name" required style="padding: 12px; border-radius: 8px; border: 1px solid #ccc;" />
+
+    <label><strong>Email *</strong></label>
+    <input type="email" name="Email" required style="padding: 12px; border-radius: 8px; border: 1px solid #ccc;" />
+
+    <label><strong>Comment or Message *</strong></label>
+    <textarea name="Message" rows="5" required style="padding: 12px; border-radius: 8px; border: 1px solid #ccc;"></textarea>
+
+    <!-- ✅ Google reCAPTCHA -->
+  <div class="g-recaptcha" data-sitekey="6LcA9WUrAAAAAEg4bO_E7-RbAh6_Q6I8RmsMM0oK"></div>
+
+    <button type="submit"
+      style="padding: 12px 24px; font-weight: bold; background: #4a90e2; color: white; border: none; border-radius: 8px; cursor: pointer; width: 140px;">
+      Submit
+    </button>
+  </form>
+
+
+    </div>
+  </div>
+</section>
+
+
+  
+ 
+
+ 
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      offset: 150,
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+      overflow: hidden;
+    }
+ 
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #4a9bd8, #66c2ff);
+      padding: 12px 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      height: 80px;
+    }
+ 
+    .logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: white;
+      padding: 4px;
+    }
+ 
+    .nav-links a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      position: relative;
+    }
+ 
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 100%;
+      height: 2px;
+      background: white;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+ 
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+    }
+ 
+    .buttons {
+      display: flex;
+      gap: 12px;
+    }
+ 
+    .btn-nav {
+      background: white;
+      color: #4a9bd8;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+ 
+    .btn-nav:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+ 
+    .main {
+      height: calc(100% - 80px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+ 
+    .login-box {
+      background: #fff;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      border: 2px solid #4a90e2;
+      box-sizing: border-box;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+ 
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+ 
+    .login-box h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 24px;
+      color: #222;
+    }
+ 
+    .login-box p {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #666;
+    }
+ 
+    .form-group {
+      position: relative;
+      margin-bottom: 24px;
+    }
+ 
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px 12px 40px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+ 
+    .form-group i {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #888;
+    }
+ 
+    .error-message {
+      font-size: 13px;
+      color: red;
+      margin-top: 4px;
+      display: none;
+    }
+ 
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+      position: relative;
+    }
+ 
+    .btn:hover {
+      background: #357ac9;
+    }
+ 
+    .spinner {
+      display: none;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      border: 2px solid white;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+ 
+    @keyframes spin {
+      to {
+        transform: translateY(-50%) rotate(360deg);
+      }
+    }
+ 
+    .signup {
+      text-align: center;
+      margin-top: 18px;
+    }
+ 
+    .signup a {
+      color: #4a90e2;
+      font-weight: bold;
+      text-decoration: none;
+    }
+ 
+    .signup a:hover {
+      text-decoration: underline;
+    }
+ 
+    @media (max-width: 500px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+ 
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="images/Aibot 1.jpg" alt="Bot Logo" />
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="#">About</a>
+      <a href="#">Services</a>
+    </nav>
+    <div class="buttons">
+      <a href="admin_login.html" class="btn-nav"><i class="fas fa-user-shield"></i> Admin</a>
+      <a href="user_login.html" class="btn-nav"><i class="fas fa-user-graduate"></i> User</a>
+    </div>
+  </header>
+ 
+  <!-- Login Form -->
+  <div class="main">
+    <div class="login-box">
+      <form id="loginForm">
+        <h2>User Log in</h2>
+        <p>Access your AI teaching assistant tools</p>
+ 
+        <div class="form-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="email" placeholder="Email" required>
+          <div class="error-message" id="emailError">Please enter a valid email.</div>
+        </div>
+ 
+        <div class="form-group">
+          <i class="fas fa-key"></i>
+          <input type="password" id="password" placeholder="Password" required>
+          <div class="error-message" id="passwordError">Password is required.</div>
+        </div>
+ 
+        <button type="submit" class="btn">
+          Sign in
+          <div class="spinner" id="spinner"></div>
+        </button>
+      </form>
+      <div class="signup">
+        New user? <a href="teacher_register.html">Sign up</a>
+      </div>
+    </div>
+  </div>
+ 
+  <script>
+    const form = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const emailError = document.getElementById("emailError");
+    const passwordError = document.getElementById("passwordError");
+    const spinner = document.getElementById("spinner");
+ 
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+ 
+      // Reset error states
+      emailError.style.display = "none";
+      passwordError.style.display = "none";
+ 
+      let hasError = false;
+ 
+      if (!emailInput.value.includes("@")) {
+        emailError.style.display = "block";
+        hasError = true;
+      }
+ 
+      if (passwordInput.value.trim() === "") {
+        passwordError.style.display = "block";
+        hasError = true;
+      }
+ 
+      if (hasError) return;
+ 
+      spinner.style.display = "inline-block";
+ 
+      const formData = new FormData();
+      formData.append("email", emailInput.value.trim());
+      formData.append("password", passwordInput.value);
+ 
+      try {
+        const response = await fetch("http://localhost:8000/login_teacher/", {
+          method: "POST",
+          body: formData,
+        });
+ 
+        const result = await response.json();
+ 
+          if (response.ok) {
+            localStorage.setItem("userName", result.name);
+            localStorage.setItem("userEmail", result.email);
+            localStorage.setItem("userGrade", result.grade);
+            localStorage.setItem("userSubject", result.subject);
+            localStorage.setItem("userPhoto", "images/Aibot 1.jpg"); // default
+ 
+            alert("✅ Login successful! Redirecting...");
+            window.location.href = "userHome.html";
+          }
+ 
+       else {
+          alert("❌ " + (result.message || "Invalid login."));
+        }
+      } catch (error) {
+        alert("❌ Unable to connect to the server.");
+        console.error(error);
+      } finally {
+        spinner.style.display = "none";
+      }
+    });
+  </script>
+ 
+</body>
+</html>
+ 
+ 

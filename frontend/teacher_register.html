@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Registration</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+    }
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #4a9bd8, #66c2ff);
+      padding: 12px 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .logo img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: white;
+      padding: 4px;
+    }
+    .nav-links a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 100%;
+      height: 2px;
+      background: white;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+    }
+    .buttons {
+      display: flex;
+      gap: 12px;
+    }
+    .btn-nav {
+      background: white;
+      color: #4a9bd8;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    .btn-nav:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 20px;
+      margin-top: 120px;
+    }
+    .register-box {
+      background: #fff;
+      padding: 50px 40px;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      border: 2px solid #4a90e2;
+    }
+    .register-box h2 {
+      margin-bottom: 32px;
+      text-align: center;
+      font-size: 26px;
+      color: #222;
+    }
+    .form-group {
+      margin-bottom: 26px;
+      position: relative;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #333;
+      font-size: 15px;
+    }
+    .input-icon {
+      position: absolute;
+      top: 42px;
+      left: 14px;
+      color: #999;
+      font-size: 14px;
+    }
+    .validation-icon {
+      position: absolute;
+      top: 42px;
+      right: 14px;
+      font-size: 16px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 40px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      transition: border-color 0.2s ease-in-out;
+      background-color: white;
+      box-sizing: border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #4a90e2;
+      outline: none;
+      background-color: #f9fbff;
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: #357ac9;
+    }
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+    @media (max-width: 600px) {
+      .register-box {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">
+      <img src="images/Aibot 1.jpg" alt="Bot Logo" />
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="#">About</a>
+      <a href="#">Services</a>
+    </nav>
+    <div class="buttons">
+      <a href="admin_login.html" class="btn-nav"><i class="fas fa-user-shield"></i> Admin</a>
+      <a href="user_login.html" class="btn-nav"><i class="fas fa-user-graduate"></i> User</a>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="register-box">
+      <h2>Teacher Registration</h2>
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" id="name" required />
+          <span class="validation-icon" id="name-icon"></span>
+        </div>
+        <div class="form-group">
+          <label for="email">Email ID</label>
+          <i class="fas fa-envelope input-icon"></i>
+          <input type="email" id="email" required />
+          <span class="validation-icon" id="email-icon"></span>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="password" required />
+          <div id="passwordHint" style="font-size: 13px; color: #888; margin-top: 5px;">
+            Password must be at least 8 characters long and include uppercase, lowercase, number, and symbol.
+          </div>
+          <div id="passwordStrength" style="margin-top: 5px; font-size: 13px;"></div>
+        </div>
+        <div class="form-group">
+          <label for="confirm">Re-type Password</label>
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="confirm" required />
+        </div>
+        <div class="form-group">
+          <label for="grade">Class/Grade</label>
+          <i class="fas fa-layer-group input-icon"></i>
+          <select id="grade" required>
+            <option value="">Select Grade</option>
+            <option value="1">Grade 1</option>
+            <option value="2">Grade 2</option>
+            <option value="3">Grade 3</option>
+            <option value="4">Grade 4</option>
+            <option value="5">Grade 5</option>
+            <option value="6">Grade 6</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <i class="fas fa-book input-icon"></i>
+          <select id="subject" required>
+            <option value="">Select Subject</option>
+            <option value="Maths">Maths</option>
+            <option value="Science">Science</option>
+            <option value="ComputerScience">Computer</option>
+          </select>
+        </div>
+        <button type="submit" class="btn">Register</button>
+      </form>
+      <div class="message" id="message"></div>
+    </div>
+  </div>
+
+<script>
+  function validateName(name) {
+    return name.length >= 2;
+  }
+
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function checkPasswordStrength(password) {
+    const strengthEl = document.getElementById("passwordStrength");
+    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&^])[A-Za-z\d@$!%*?#&^]{8,}$/;
+
+    if (!password) {
+      strengthEl.textContent = "";
+      return;
+    }
+
+    if (strongRegex.test(password)) {
+      strengthEl.style.color = "green";
+      strengthEl.textContent = "✅ Strong password";
+    } else {
+      strengthEl.style.color = "red";
+      strengthEl.textContent = "❌ Weak password. Include uppercase, lowercase, number, and symbol.";
+    }
+  }
+
+  document.getElementById("name").addEventListener("input", function () {
+    const icon = document.getElementById("name-icon");
+    icon.innerHTML = validateName(this.value) ? '✅' : '❌';
+  });
+
+  document.getElementById("email").addEventListener("input", function () {
+    const icon = document.getElementById("email-icon");
+    icon.innerHTML = validateEmail(this.value) ? '✅' : '❌';
+  });
+
+  document.getElementById("password").addEventListener("input", function () {
+    checkPasswordStrength(this.value);
+  });
+
+  document.getElementById("registerForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm").value;
+    const grade = document.getElementById("grade").value;
+    const subject = document.getElementById("subject").value;
+
+    if (password !== confirm) {
+      alert("❌ Passwords do not match!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("grade", grade);
+    formData.append("subject", subject);
+
+    try {
+      const res = await fetch("http://localhost:8000/register_teacher/", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("✅ Registration successful!");
+        window.location.assign("user_login.html");
+      } else {
+        alert("❌ " + (data.message || "Registration failed."));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to connect to the server.");
+    }
+  });
+</script>
+
+</body>
+</html>

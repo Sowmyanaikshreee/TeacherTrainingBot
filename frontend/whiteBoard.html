@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Whiteboard - Simplified</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    body {
+      display: flex;
+      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+    }
+ 
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      background: #4a90e2;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+ 
+    .sidebar .profile {
+      text-align: center;
+    }
+ 
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid white;
+      margin-bottom: 10px;
+    }
+ 
+    .profile h3 {
+      font-size: 18px;
+    }
+ 
+    .profile p {
+      font-size: 13px;
+      color: #dceeff;
+    }
+ 
+    .nav-links {
+      margin-top: 30px;
+    }
+ 
+    .nav-links a {
+      display: block;
+      padding: 12px 16px;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+ 
+    .nav-links a.active,
+    .nav-links a:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+    .bottom-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+ 
+    .btn-link {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+ 
+    .btn-link:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+    .main-content {
+      margin-left: 240px;
+      flex: 1;
+      position: relative;
+      background: #fff;
+    }
+ 
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+ 
+    .toolbar {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      background: white;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      gap: 10px;
+      align-items: center;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+ 
+    .toolbar button, .toolbar input, .toolbar select, .toolbar label {
+      border: none;
+      background: #f0f0f0;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+ 
+    .toolbar button.active {
+      background-color: #304FFE;
+      color: white;
+    }
+ 
+    .hidden-input {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+ 
+  <aside class="sidebar">
+    <div>
+      <div class="profile">
+        <img id="profile-photo" src="" alt="User" onerror="this.src='images/Aibot 1.jpg'" />
+        <h3 id="profile-name">User Name</h3>
+        <p id="profile-grade">Grade</p>
+        <p id="profile-subject">Subject</p>
+        <p id="profile-email">Email</p>
+      </div>
+      <div class="nav-links">
+        <a href="userHome.html"><i class="fas fa-home"></i> Home</a>
+        <a href="ai_chatbot.html"><i class="fas fa-robot"></i> AI Chatbot</a>
+        <a href="whiteBoard.html" class="active"><i class="fas fa-edit"></i> Whiteboards</a>
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="profile.html" class="btn-link"><i class="fas fa-user-circle"></i> Profile</a>
+      <a href="index.html" class="btn-link"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </aside>
+ 
+  <main class="main-content">
+    <div class="toolbar">
+      <button id="pen" class="active"><i class="fas fa-pen"></i></button>
+      <select id="brushSize">
+        <option value="1">1px</option>
+        <option value="2" selected>2px</option>
+        <option value="4">4px</option>
+        <option value="6">6px</option>
+        <option value="8">8px</option>
+        <option value="10">10px</option>
+      </select>
+      <button id="eraser"><i class="fas fa-eraser"></i></button>
+      <select id="shape">
+        <option value="none">Free Draw</option>
+        <option value="line">Line</option>
+        <option value="rect">Rectangle</option>
+        <option value="circle">Circle</option>
+      </select>
+      <input type="color" id="colorPicker" value="#000000">
+      <input type="color" id="fillColor" value="#ffffff">
+      <select id="fontSize">
+        <option value="12">12px</option>
+        <option value="16" selected>16px</option>
+        <option value="20">20px</option>
+        <option value="24">24px</option>
+        <option value="32">32px</option>
+      </select>
+      <select id="fontFamily">
+        <option value="Arial">Arial</option>
+        <option value="Verdana">Verdana</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Courier New">Courier New</option>
+      </select>
+      <label for="imgInput"><i class="fas fa-image"></i></label>
+      <input type="file" id="imgInput" class="hidden-input" accept="image/*">
+      <button id="clear"><i class="fas fa-trash"></i></button>
+      <button id="undo"><i class="fas fa-undo"></i></button>
+      <button id="redo"><i class="fas fa-redo"></i></button>
+      <button id="export"><i class="fas fa-download"></i></button>
+    </div>
+    <canvas id="whiteboard"></canvas>
+  </main>
+ 
+  <script>
+    const email = localStorage.getItem("userEmail") || "";
+    const emailSafe = email.replace(/[@.]/g, "_");
+    const imageUrl = `http://localhost:8000/profile_photos/${emailSafe}.jpg`;
+ 
+    document.getElementById("profile-name").innerText = localStorage.getItem("userName") || "User";
+    document.getElementById("profile-grade").innerText = "Grade: " + (localStorage.getItem("userGrade") || "-");
+    document.getElementById("profile-subject").innerText = "Subject: " + (localStorage.getItem("userSubject") || "-");
+    document.getElementById("profile-email").innerText = email || "-";
+    document.getElementById("profile-photo").src = imageUrl;
+ 
+    const canvas = document.getElementById('whiteboard');
+    const ctx = canvas.getContext('2d');
+    let drawing = false, erasing = false, shape = 'none', tool = 'pen';
+    let startX, startY, color = '#000000', strokeSize = 2, fillColor = '#ffffff';
+    const undoStack = [], redoStack = [];
+ 
+    function resizeCanvas() {
+      canvas.width = window.innerWidth - 240;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+ 
+    function saveState() {
+      undoStack.push(canvas.toDataURL());
+      if (undoStack.length > 20) undoStack.shift();
+    }
+ 
+    function restoreState(stackFrom, stackTo) {
+      if (stackFrom.length === 0) return;
+      stackTo.push(canvas.toDataURL());
+      const img = new Image();
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = stackFrom.pop();
+    }
+ 
+    canvas.addEventListener('mousedown', e => {
+      startX = e.offsetX;
+      startY = e.offsetY;
+      drawing = true;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+    });
+ 
+    canvas.addEventListener('mousemove', e => {
+      if (!drawing || shape !== 'none') return;
+      ctx.strokeStyle = erasing ? '#ffffff' : color;
+      ctx.lineWidth = strokeSize;
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+    });
+ 
+    canvas.addEventListener('mouseup', e => {
+      drawing = false;
+      if (shape !== 'none') {
+        const endX = e.offsetX, endY = e.offsetY;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = strokeSize;
+        ctx.fillStyle = fillColor;
+ 
+        if (shape === 'line') {
+          ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(endX, endY); ctx.stroke();
+        } else if (shape === 'rect') {
+          ctx.strokeRect(startX, startY, endX - startX, endY - startY);
+          ctx.fillRect(startX, startY, endX - startX, endY - startY);
+        } else if (shape === 'circle') {
+          const radius = Math.hypot(endX - startX, endY - startY);
+          ctx.beginPath(); ctx.arc(startX, startY, radius, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        }
+      }
+      saveState();
+    });
+ 
+    function setActive(id) {
+      document.querySelectorAll('.toolbar button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+ 
+    document.getElementById('brushSize').onchange = e => strokeSize = parseInt(e.target.value);
+    document.getElementById('pen').onclick = () => { tool = 'pen'; erasing = false; shape = 'none'; setActive('pen'); };
+    document.getElementById('eraser').onclick = () => { tool = 'pen'; erasing = true; shape = 'none'; setActive('eraser'); };
+    document.getElementById('shape').onchange = e => shape = e.target.value;
+    document.getElementById('colorPicker').onchange = e => color = e.target.value;
+    document.getElementById('fillColor').onchange = e => fillColor = e.target.value;
+    document.getElementById('fontSize').onchange = () => ctx.font = `${fontSize.value}px ${fontFamily.value}`;
+    document.getElementById('fontFamily').onchange = () => ctx.font = `${fontSize.value}px ${fontFamily.value}`;
+ 
+    document.getElementById('imgInput').onchange = e => {
+      const file = e.target.files[0];
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 50, 50, 300, 300);
+      img.src = URL.createObjectURL(file);
+    };
+ 
+    document.getElementById('clear').onclick = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
+    document.getElementById('undo').onclick = () => restoreState(undoStack, redoStack);
+    document.getElementById('redo').onclick = () => restoreState(redoStack, undoStack);
+    document.getElementById('export').onclick = () => {
+      const link = document.createElement('a');
+      link.download = 'whiteboard.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    };
+  </script>
+</body>
+</html>

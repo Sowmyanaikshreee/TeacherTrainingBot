@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+requests
+pymupdf
+python-multipart
+fastapi
+uvicorn
+requests
+pymupdf
+python-multipart
+docx2txt
+PyMuPDF>=1.18.0
+fpdf
+
+

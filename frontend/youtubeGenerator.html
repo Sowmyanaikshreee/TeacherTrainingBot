@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>YouTube Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url("images/utubebg.png") no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      min-height: 100vh;
+      overflow-y: scroll;
+    }
+ 
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      background: #4a90e2;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+ 
+    .sidebar .profile {
+      text-align: center;
+    }
+ 
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      border: 3px solid white;
+    }
+ 
+    .profile h3 {
+      font-size: 18px;
+    }
+ 
+    .profile p {
+      font-size: 13px;
+      color: #dceeff;
+    }
+ 
+    .nav-links {
+      margin-top: 30px;
+    }
+ 
+    .nav-links a {
+      display: block;
+      padding: 12px 16px;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+ 
+    .nav-links a.active,
+    .nav-links a:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+    .bottom-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+ 
+    .btn-link {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+ 
+    .btn-link:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+ 
+    .main-content {
+      margin-left: 240px;
+      padding: 40px;
+      width: 100%;
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+ 
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      flex: 1 1 400px;
+      max-width: 600px;
+      min-height: 300px;
+    }
+ 
+    h2 {
+      color: #3366cc;
+      margin-bottom: 15px;
+    }
+ 
+    input, button {
+      padding: 10px;
+      width: 100%;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+ 
+    button {
+      background-color: #4a90e2;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+ 
+    button:hover {
+      background-color: #357abd;
+    }
+ 
+    .result {
+      margin-top: 15px;
+    }
+ 
+    .result a {
+      display: block;
+      color: #1a0dab;
+      text-decoration: none;
+      margin-bottom: 8px;
+    }
+ 
+    .result a:hover {
+      text-decoration: underline;
+    }
+ 
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+ 
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+ 
+      .container {
+        width: 100%;
+      }
+    }
+  </style>
+ 
+</head>
+<body>
+ 
+  <aside class="sidebar">
+    <div>
+      <div class="profile">
+        <img id="profile-photo" src="" alt="User" onerror="this.src='images/Aibot 1.jpg'" />
+        <h3 id="profile-name">User Name</h3>
+        <p id="profile-grade">Grade</p>
+        <p id="profile-subject">Subject</p>
+        <p id="profile-email">Email</p>
+      </div>
+      <div class="nav-links">
+        <a href="userHome.html"><i class="fas fa-home"></i> Home</a>
+        <a href="ai_chatbot.html"><i class="fas fa-robot"></i> AI Chatbot</a>
+        <a href="whiteBoard.html"><i class="fas fa-edit"></i> Whiteboards</a>
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="profile.html" class="btn-link"><i class="fas fa-user-circle"></i> Profile</a>
+      <a href="index.html" class="btn-link"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </aside>
+ 
+  <main class="main-content">
+ 
+    <!-- YouTube Links Generator -->
+    <div class="container">
+      <h2>Search Youtube Videos</h2>
+      <input type="text" id="topicInput" placeholder="Enter a topic (e.g., Photosynthesis)" />
+      <button onclick="getLinks()">Search Videos</button>
+      <div class="result" id="linksResult"></div>
+    </div>
+ 
+    <!-- YouTube Video Summarizer -->
+    <div class="container">
+      <h2>Summarize YouTube Video</h2>
+      <input type="text" id="ytLink" placeholder="Paste YouTube link here" />
+      <button onclick="summarize()">Get Summary</button>
+      <div class="result" id="summaryResult"></div>
+    </div>
+ 
+  </main>
+ 
+  <script>
+ 
+  const email = localStorage.getItem("userEmail") || "";
+  const emailSafe = email.replace(/[@.]/g, "_");
+  const imageUrl = `http://localhost:8000/profile_photos/${emailSafe}.jpg`;
+ 
+  document.getElementById("profile-name").innerText = localStorage.getItem("userName") || "User";
+  document.getElementById("profile-grade").innerText = "Grade: " + (localStorage.getItem("userGrade") || "-");
+  document.getElementById("profile-subject").innerText = "Subject: " + (localStorage.getItem("userSubject") || "-");
+  document.getElementById("profile-email").innerText = email || "-";
+  document.getElementById("profile-photo").src = imageUrl;
+ 
+ 
+    async function getLinks() {
+      const topic = document.getElementById("topicInput").value;
+      const output = document.getElementById("linksResult");
+      output.innerHTML = "Fetching videos...";
+ 
+      try {
+        const res = await fetch(`http://localhost:8000/real_youtube_links?q=${encodeURIComponent(topic)}`);
+        const data = await res.json();
+ 
+        output.innerHTML = "";
+        data.results.forEach(item => {
+          const a = document.createElement("a");
+          a.href = item.url;
+          a.target = "_blank";
+          a.textContent = item.title;
+          output.appendChild(a);
+        });
+      } catch (err) {
+        output.innerHTML = "❌ Failed to fetch YouTube links.";
+      }
+    }
+ 
+    async function summarize() {
+      const ytLink = document.getElementById("ytLink").value;
+      const output = document.getElementById("summaryResult");
+      output.innerHTML = "Summarizing video...";
+ 
+      try {
+        const res = await fetch("http://localhost:8000/summarize_youtube", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ link: ytLink })
+        });
+ 
+        const data = await res.json();
+        output.innerHTML = `<p>${data.summary.replace(/\n/g, "<br>")}</p>`;
+      } catch (err) {
+        output.innerHTML = "❌ Failed to generate summary.";
+      }
+    }
+  </script>
+ 
+</body>
+</html>

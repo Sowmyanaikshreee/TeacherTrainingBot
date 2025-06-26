@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lesson Planner</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f8fc;
+      min-height: 100vh;
+      background: url("images/LBbg.jpg") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      background: #4a90e2;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .profile {
+      text-align: center;
+    }
+
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      border: 3px solid white;
+    }
+
+    .profile h3 {
+      font-size: 18px;
+    }
+
+    .profile p {
+      font-size: 13px;
+      color: #dceeff;
+    }
+
+    .nav-links {
+      margin-top: 30px;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 12px 16px;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .nav-links a.active,
+    .nav-links a:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+
+    .bottom-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-link {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .btn-link:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+
+    .main {
+      margin-left: 260px;
+      padding: 40px 30px;
+      max-width: 1000px;
+    }
+
+    h2 {
+      color: #012141;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #4a90e2;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-block;
+      margin-top: 20px;
+      transition: background 0.3s ease;
+      width: auto;
+      min-width: 160px;
+    }
+
+    button:hover {
+      background-color: #3b7dc2;
+    }
+
+    .topic-wrapper {
+      background: #fff;
+      border-radius: 16px;
+      padding: 25px 30px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      margin-top: 30px;
+    }
+
+    .topic-wrapper h3 {
+      font-size: 18px;
+      color: #012141;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topic-wrapper h3 i {
+      color: #4a90e2;
+    }
+
+    .topic-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .topic-grid button {
+      padding: 10px 20px;
+      border: 2px solid #4a90e2;
+      border-radius: 999px;
+      background: white;
+      font-weight: 500;
+      color: #4a90e2;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .topic-grid button:hover,
+    .topic-grid button.active {
+      background: #4a90e2;
+      color: white;
+    }
+
+    .lesson-output {
+      background: #eef4fc;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 30px;
+      line-height: 1.6;
+      font-size: 16px;
+      white-space: normal;
+      text-align: left;
+    }
+
+    .loading {
+      font-style: italic;
+      color: #888;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div>
+      <div class="profile">
+        <img id="profile-photo" src="" alt="User" onerror="this.src='images/Aibot 1.jpg'" />
+        <h3 id="profile-name">User Name</h3>
+        <p id="profile-grade">Grade</p>
+        <p id="profile-subject">Subject</p>
+        <p id="profile-email">Email</p>
+      </div>
+      <div class="nav-links">
+        <a href="userHome.html"><i class="fas fa-home"></i> Home</a>
+        <a href="ai_chatbot.html"><i class="fas fa-robot"></i> AI Chatbot</a>
+        <a href="whiteBoard.html"><i class="fas fa-edit"></i> Whiteboards</a>
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="profile.html" class="btn-link"><i class="fas fa-user-circle"></i> Profile</a>
+      <a href="index.html" class="btn-link"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <h2>📘 AI Lesson Plan Builder</h2>
+
+    <div class="topic-wrapper">
+      <h3><i class="fas fa-file-alt"></i> Select File</h3>
+      <select id="fileSelect" onchange="fetchTopics()">
+        <option disabled selected>-- Select a file --</option>
+      </select>
+    </div>
+
+    <div class="topic-wrapper">
+      <h3><i class="fas fa-box-open"></i> Select Topic</h3>
+      <div id="topicsArea" class="topic-grid">
+        <div class="loading">Choose a file to load topics...</div>
+      </div>
+
+    <div id="customTopicBox" style="display: none; margin-top: 15px;">
+      <input type="text" id="customTopicInput" placeholder="Enter your topic..." 
+         style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;" />
+    </div>
+  
+    </div>
+
+    <div style="text-align: center;">
+      <button onclick="generateLesson()">Generate Lesson Plan</button>
+      <div id="loadingMsg" class="loading" style="display: none;">⏳ Generating lesson plan, please wait...</div>
+    </div>
+
+    <div style="text-align: center;">
+      <div id="outputBox" class="lesson-output">Your lesson plan will appear here...</div>
+      <button onclick="downloadLesson()">Download as PDF</button>
+    </div>
+  </main>
+
+  <script>
+    let selectedTopic = "";
+    let lessonText = "";
+
+    const email = localStorage.getItem("userEmail") || "";
+    const emailSafe = email.replace(/[@.]/g, "_");
+    const imageUrl = `http://localhost:8000/profile_photos/${emailSafe}.jpg`;
+
+    document.getElementById("profile-name").innerText = localStorage.getItem("userName") || "User";
+    document.getElementById("profile-grade").innerText = "Grade: " + (localStorage.getItem("userGrade") || "-");
+    document.getElementById("profile-subject").innerText = "Subject: " + (localStorage.getItem("userSubject") || "-");
+    document.getElementById("profile-email").innerText = email || "-";
+    document.getElementById("profile-photo").src = imageUrl;
+
+    window.onload = loadFiles;
+
+    async function loadFiles() {
+  const userGrade = localStorage.getItem("userGrade") || "";
+  const userSubject = localStorage.getItem("userSubject") || "";
+  const category = `class_${userGrade}/${userSubject}`;
+  const fileSelect = document.getElementById("fileSelect");
+  fileSelect.innerHTML = '<option>Loading files...</option>';
+  document.getElementById("topicsArea").innerHTML = "";
+
+  try {
+    const res = await fetch("http://localhost:8000/uploaded_files/");
+    const data = await res.json();
+    const files = data.files_by_category[category] || [];
+
+    fileSelect.innerHTML = '<option disabled selected>-- Select a file --</option>';
+    files.forEach(file => {
+      const option = document.createElement("option");
+      option.value = `${category}||${file}`; // send full category and file together
+      option.textContent = file;
+      fileSelect.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Error loading files:", err);
+    fileSelect.innerHTML = '<option disabled selected>Error loading files</option>';
+  }
+
+  document.getElementById("topicsArea").innerHTML = '<div class="loading">Choose a file to load topics...</div>';
+}
+
+
+    async function fetchTopics() {
+      const userGrade = localStorage.getItem("userGrade") || "";
+      const fileValue = document.getElementById("fileSelect").value;
+      if (!fileValue.includes("||")) return;
+
+      const [category, file] = fileValue.split("||");
+
+      const topicsArea = document.getElementById("topicsArea");
+
+      if (!file) {
+        topicsArea.innerHTML = "<div class='loading'>Please select a file.</div>";
+        return;
+      }
+
+      topicsArea.innerHTML = "<div class='loading'>Loading topics...</div>";
+      const res = await fetch("http://localhost:8000/ask/", {
+        method: "POST",
+        body: new URLSearchParams({
+          category,
+          question: `Extract main teaching topics from this file: ${file}`
+        })
+      });
+
+      const data = await res.json();
+      selectedTopic = "";
+      topicsArea.innerHTML = "";
+
+      const topics = data.answer.split("\n").filter(line => line.trim().startsWith("•"));
+      topics.forEach(topic => {
+        const btn = document.createElement("button");
+        btn.textContent = topic.replace("•", "").trim();
+        btn.onclick = () => {
+          selectedTopic = btn.textContent;
+          document.getElementById("customTopicBox").style.display = "none";
+          document.querySelectorAll(".topic-grid button").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+        };
+        topicsArea.appendChild(btn);
+      });
+
+      const otherBtn = document.createElement("button");
+      otherBtn.textContent = "Others";
+      otherBtn.onclick = () => {
+        selectedTopic = "";
+        document.querySelectorAll(".topic-grid button").forEach(b => b.classList.remove("active"));
+        otherBtn.classList.add("active");
+        document.getElementById("customTopicBox").style.display = "block";
+      };
+      topicsArea.appendChild(otherBtn);
+    }
+
+    async function generateLesson() {
+      const userGrade = localStorage.getItem("userGrade") || "";
+      const category = `class_${userGrade}`;
+      const customInput = document.getElementById("customTopicInput").value.trim();
+      const topicToUse = selectedTopic || customInput;
+
+      if (!topicToUse) return alert("Please select or enter a topic first.");
+
+      document.getElementById("loadingMsg").style.display = "block";
+
+      const res = await fetch("http://localhost:8000/generate_lesson_plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: "General",
+          grade: category.replace("class_", "Class "),
+          standard: "Curriculum-aligned",
+          objective: `Teach the topic ${topicToUse}`,
+          activities: `Activity, quiz and worksheet on ${topicToUse}`,
+          assessment: "Quiz and writing task",
+          template: "brief"
+        })
+      });
+
+      const data = await res.json();
+      lessonText = data.plan;
+
+      const formattedLesson = lessonText
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*/g, "")
+        .replace(/\n/g, "<br>")
+        .replace(/##/g, "");
+
+      document.getElementById("outputBox").innerHTML = formattedLesson;
+      document.getElementById("loadingMsg").style.display = "none";
+    }
+
+    async function downloadLesson() {
+      if (!lessonText) return alert("Please generate a lesson plan first.");
+
+      const res = await fetch("http://localhost:8000/generate_lesson_plan_pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: lessonText })
+      });
+
+      const blob = await res.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "lesson_plan.pdf";
+      link.click();
+    }
+  </script>
+</body>
+</html>

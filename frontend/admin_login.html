@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+    }
+ 
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #4a9bd8, #66c2ff);
+      padding: 12px 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+ 
+    .logo img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: white;
+      padding: 4px;
+    }
+ 
+    .nav-links a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      position: relative;
+    }
+ 
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 100%;
+      height: 2px;
+      background: white;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+ 
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+    }
+ 
+    .buttons {
+      display: flex;
+      gap: 12px;
+    }
+ 
+    .btn-nav {
+      background: white;
+      color: #4a9bd8;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+ 
+    .btn-nav:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+ 
+    .main {
+      display: flex;
+      flex-wrap: wrap;
+      height: calc(100vh - 100px);
+    }
+ 
+    .left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      padding: 30px;
+    }
+ 
+    .left img {
+      max-width: 100%;
+      height: auto;
+    }
+ 
+    .right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f4f7fa;
+      padding: 30px;
+    }
+ 
+    .login-box {
+      background: #fff;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      border: 2px solid #4a90e2;
+      box-sizing: border-box;
+    }
+ 
+    .login-box h2 {
+      margin-bottom: 8px;
+      font-size: 24px;
+      color: #222;
+    }
+ 
+    .login-box p {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 24px;
+    }
+ 
+    .form-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+ 
+    .form-group input {
+      width: 100%;
+      padding: 12px 36px 12px 36px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+ 
+    .form-group input:focus {
+      border-color: #4a90e2;
+    }
+ 
+    .form-group i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #4a90e2;
+      font-size: 16px;
+    }
+ 
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+ 
+    .btn:hover {
+      background: #357ac9;
+    }
+ 
+    .divider {
+      text-align: center;
+      margin: 16px 0;
+      font-size: 14px;
+      color: #888;
+    }
+ 
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #fff;
+    }
+ 
+    .google-btn img {
+      width: 18px;
+      margin-left: 8px;
+    }
+ 
+    .signup {
+      margin-top: 18px;
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+    }
+ 
+    .signup a {
+      color: #4a90e2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+ 
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+        height: auto;
+      }
+     
+ 
+      .left, .right {
+        flex: none;
+        width: 100%;
+      }
+ 
+      .login-box {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="images/Aibot 1.jpg" alt="Bot Logo" />
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="#">About</a>
+      <a href="#">Services</a>
+    </nav>
+    <div class="buttons">
+      <a href="admin_login.html" class="btn-nav"><i class="fas fa-user-shield"></i> Admin</a>
+      <a href="user_login.html" class="btn-nav"><i class="fas fa-user-graduate"></i> User</a>
+    </div>
+  </header>
+ 
+  <div class="main">
+    <div class="left">
+      <img src="images/admin.jpg" alt="AI Assistant Illustration">
+    </div>
+    <div class="right">
+      <div class="login-box">
+        <form onsubmit="return validateLogin(event)">
+          <h2>Admin Log in</h2>
+          <p>Teach using the Power of Generative AI</p>
+          <div class="form-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" name="email" placeholder="Email" required>
+          </div>
+          <div class="form-group">
+            <i class="fas fa-key"></i>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+          </div>
+          <button type="submit" class="btn">Sign in</button>
+        </form>
+        <div class="divider"></div>
+ 
+ 
+        <div class="signup">
+          New member? <a href="#">Sign up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <script>
+    function validateLogin(event) {
+      event.preventDefault();
+ 
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+ 
+      const validEmail = "admin@example.com";
+      const validPassword = "pass123";
+ 
+      if (email === validEmail && password === validPassword) {
+        alert("Login successful!");
+        window.location.href = "upload.html";
+      } else {
+        alert("Invalid credentials. Please try again.");
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>

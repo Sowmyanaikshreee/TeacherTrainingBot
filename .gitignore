@@ -1,0 +1,17 @@
+# Ignore Python virtual environments
+venv/
+.env/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# VS Code settings (optional)
+.vscode/

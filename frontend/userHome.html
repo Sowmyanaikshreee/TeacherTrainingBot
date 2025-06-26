@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+ 
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f8fc;
+      min-height: 100vh;
+      color: #333;
+    }
+ 
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      background: #4a90e2;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+ 
+    .sidebar .profile {
+      text-align: center;
+    }
+ 
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      border: 3px solid white;
+    }
+ 
+    .profile h3 {
+      font-size: 18px;
+    }
+ 
+    .profile p {
+      font-size: 13px;
+      color: #dceeff;
+    }
+ 
+    .nav-links {
+      margin-top: 30px;
+    }
+ 
+    .nav-links a {
+      display: block;
+      padding: 12px 16px;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+ 
+    .nav-links a.active,
+    .nav-links a:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+    .bottom-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+ 
+    .btn-link {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+ 
+    .btn-link:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+    .filter-bar {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      z-index: 1000;
+    }
+ 
+    .filter-bar select {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-weight: bold;
+      background: #4a90e2;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      min-width: 140px;
+      text-align: center;
+    }
+ 
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #3366cc;
+      margin-bottom: 20px;
+    }
+ 
+    .main-content {
+      margin-left: 240px;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 30px;
+      min-height: 100vh;
+    }
+ 
+    .tool-container {
+      border: 2px solid #c6d6f0;
+      border-radius: 16px;
+      padding: 30px 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      max-width: 900px;
+      width: 100%;
+      margin: 20px auto;
+    }
+ 
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      justify-items: center;
+    }
+ 
+    @media (max-width: 1024px) {
+      .tools-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+ 
+      .tool-container {
+        margin: 20px;
+        padding: 20px;
+      }
+    }
+ 
+    .tool-card {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      width: 230px;
+      height: 230px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+ 
+    .tool-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+    }
+ 
+    .tool-card img {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      margin-bottom: 15px;
+    }
+ 
+    .tool-card span {
+      font-size: 16px;
+      font-weight: 600;
+    }
+ 
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+ 
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+ 
+      .filter-bar {
+        flex-direction: column;
+        gap: 10px;
+      }
+ 
+      .tools-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+ 
+  <aside class="sidebar">
+    <div>
+      <div class="profile">
+        <img id="profile-photo" src="" alt="User" onerror="this.src='images/Aibot 1.jpg'" />
+        <h3 id="profile-name">User Name</h3>
+        <p id="profile-grade">Grade</p>
+        <p id="profile-subject">Subject</p>
+        <p id="profile-email">Email</p>
+      </div>
+      <div class="nav-links">
+        <a href="userHome.html" class="active"><i class="fas fa-home"></i> Home</a>
+        <a href="ai_chatbot.html"><i class="fas fa-robot"></i> AI Chatbot</a>
+        <a href="whiteBoard.html"><i class="fas fa-edit"></i> Whiteboards</a>
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="profile.html" class="btn-link"><i class="fas fa-user-circle"></i> Profile</a>
+      <a href="index.html" class="btn-link"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </aside>
+ 
+  <main class="main-content">
+    <div class="filter-bar">
+      <select name="language" id="language">
+        <option disabled selected>Language</option>
+        <option>English</option>
+        <option>Hindi</option>
+      </select>
+    </div>
+ 
+    <div class="title"><b>Discover Smart Tools at Your Fingertips</b></div>
+ 
+    <div class="tool-container">
+      <div class="tools-grid">
+        <a class="tool-card" href="Practice_session.html">
+          <img src="images/PS1.png" alt="Practice Session" />
+          <span>Practice Session</span>
+        </a>
+        <a class="tool-card" href="askContent_Question.html">
+          <img src="images/ACQ1.jpg" alt="Ask Question" />
+          <span>Ask Content Question</span>
+        </a>
+        <a class="tool-card" href="lesson_plan.html">
+          <img src="images/LPB1.jpg" alt="Lesson Plan" />
+          <span>Lesson Plan Builder</span>
+        </a>
+        <a class="tool-card" href="assessment_Builder.html">
+          <img src="images/AB1.jpg" alt="Assessment" />
+          <span>Assessment Builder</span>
+        </a>
+        <a class="tool-card" href="homework_upload.html">
+          <img src="images/HB1.jpg" alt="Homework" />
+          <span>Homework Upload</span>
+        </a>
+        <a class="tool-card" href="youtubeGenerator.html">
+          <img src="images/utube.jpg" alt="YouTube Link Generator" />
+          <span>YouTube Assistant</span>
+        </a>
+        <a class="tool-card" href="summaryTopic.html">
+          <img src="images/TS.jpg" alt="Summarize topic" />
+          <span>Summarize Content and Image</span>
+        </a>
+        <a class="tool-card" href="lesson_generator.html">
+          <img src="images/LB1.jpg" alt="Summarize topic" />
+          <span>Lesson Planner</span>
+        </a>
+      </div>
+    </div>
+  </main>
+ 
+  <script>
+    const email = localStorage.getItem("userEmail") || "";
+    const emailSafe = email.replace(/[@.]/g, "_");
+    const imageUrl = `http://localhost:8000/profile_photos/${emailSafe}.jpg`;
+ 
+    document.getElementById("profile-name").innerText = localStorage.getItem("userName") || "User";
+    document.getElementById("profile-grade").innerText = "Grade: " + (localStorage.getItem("userGrade") || "-");
+    document.getElementById("profile-subject").innerText = "Subject: " + (localStorage.getItem("userSubject") || "-");
+    document.getElementById("profile-email").innerText = email || "-";
+    document.getElementById("profile-photo").src = imageUrl;
+  </script>
+ 
+</body>
+</html>

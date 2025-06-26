@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ask Content Question</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    body {
+      display: flex;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      min-height: 100vh;
+    }
+ 
+    .sidebar {
+      width: 240px;
+      background-color: #4a90e2;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+ 
+    .profile {
+      text-align: center;
+    }
+ 
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid white;
+      margin-bottom: 10px;
+    }
+ 
+    .profile h3 { margin: 0; font-size: 18px; }
+    .profile p { font-size: 13px; color: #dceeff; }
+ 
+    .nav-links {
+      margin-top: 30px;
+    }
+ 
+    .nav-links a {
+      display: block;
+      padding: 12px 16px;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+ 
+    .nav-links a.active,
+    .nav-links a:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+    .bottom-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+ 
+    .btn-link {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+ 
+    .btn-link:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+ 
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
+    }
+ 
+    .navbar-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #34495e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 3px solid #00d2ff;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+ 
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+ 
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: calc(100vh - 270px);
+    }
+ 
+    .bot-intro {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+ 
+    .avatar-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 12px;
+    }
+ 
+    .bot-greeting {
+      font-size: 18px;
+      color: #34495e;
+    }
+ 
+    .chat-msg {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: 20px;
+      font-size: 15px;
+      line-height: 1.4;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.4s ease-in-out;
+      word-break: break-word;
+    }
+ 
+    .chat-msg.user {
+      background: #d1e7ff;
+      align-self: flex-end;
+      text-align: right;
+    }
+ 
+    .chat-msg.bot {
+      background: #dff3d8;
+      align-self: flex-start;
+      text-align: left;
+      position: relative;
+    }
+ 
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 24px;
+      border-top: 1px solid #ddd;
+      background: #fefefe;
+      flex-shrink: 0;
+      margin-top: auto;
+    }
+ 
+    .chat-input select {
+      font-size: 15px;
+      border: 2px solid #dcdfe6;
+      border-radius: 30px;
+      padding: 10px 14px;
+      background: white;
+      outline: none;
+      width: 130px;
+      flex-shrink: 0;
+    }
+ 
+    .chat-input input {
+      font-size: 15px;
+      border: 2px solid #dcdfe6;
+      border-radius: 30px;
+      padding: 12px 18px;
+      background: white;
+      outline: none;
+      flex: 1;
+    }
+ 
+    .chat-input button {
+      background: #34495e;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      color: #fff;
+      cursor: pointer;
+    }
+ 
+    .chat-input button:hover {
+      background: #2c3e50;
+    }
+ 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+ 
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { padding: 20px; }
+      .chat-input {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+ 
+  <aside class="sidebar">
+    <div>
+      <div class="profile">
+        <img id="profile-photo" src="" alt="User" onerror="this.src='images/Aibot 1.jpg'" />
+        <h3 id="profile-name">User Name</h3>
+        <p id="profile-grade">Grade</p>
+        <p id="profile-subject">Subject</p>
+        <p id="profile-email">Email</p>
+      </div>
+      <div class="nav-links">
+        <a href="userHome.html"><i class="fas fa-home"></i> Home</a>
+        <a href="ai_chatbot.html"><i class="fas fa-robot"></i> AI Chatbot</a>
+        <a href="whiteBoard.html"><i class="fas fa-edit"></i> Whiteboards</a>
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="profile.html" class="btn-link"><i class="fas fa-user-circle"></i> Profile</a>
+      <a href="index.html" class="btn-link"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </aside>
+ 
+  <main class="main-content">
+    <div class="navbar-title">
+      Ask Content Question
+      <i class="fas fa-book"></i>
+    </div>
+ 
+    <section class="chat-container">
+      <div id="chatBox" class="chat-box">
+        <div class="bot-intro">
+          <img src="images/Aibot 1.jpg" alt="Chatbot avatar" class="avatar-image" />
+          <p class="bot-greeting">Hello teacher!<br>How can I assist you today?</p>
+        </div>
+      </div>
+ 
+      <form class="chat-input" onsubmit="event.preventDefault(); sendMessage();">
+        <select id="fileSelect">
+          <option value="">Select File</option>
+        </select>
+        <input id="questionInput" type="text" placeholder="Ask your question..." />
+        <button id="sendBtn" type="submit" title="Send">➤</button>
+        <button id="micBtn" type="button" title="Speak">🎤</button>
+      </form>
+    </section>
+  </main>
+ 
+  <script>
+    const email = localStorage.getItem("userEmail") || "";
+    const emailSafe = email.replace(/[@.]/g, "_");
+    const imageUrl = `http://localhost:8000/profile_photos/${emailSafe}.jpg`;
+ 
+    document.getElementById("profile-name").innerText = localStorage.getItem("userName") || "User";
+    document.getElementById("profile-grade").innerText = "Grade: " + (localStorage.getItem("userGrade") || "-");
+    document.getElementById("profile-subject").innerText = "Subject: " + (localStorage.getItem("userSubject") || "-");
+    document.getElementById("profile-email").innerText = email || "-";
+    document.getElementById("profile-photo").src = imageUrl;
+ 
+    const chatBox = document.getElementById("chatBox");
+    const questionInput = document.getElementById("questionInput");
+    const micBtn = document.getElementById("micBtn");
+    const sendBtn = document.getElementById("sendBtn");
+    const fileSelect = document.getElementById("fileSelect");
+ 
+    function appendMessage(msg, sender) {
+      const msgElem = document.createElement("div");
+      msgElem.className = "chat-msg " + sender;
+ 
+if (sender === "bot") {
+  const messageText = document.createElement("span");
+ 
+const formattedMsg = msg
+  .trim()
+  .replace(/\n{2,}/g, "<br><br>")  // Paragraph breaks
+  .replace(/\n\s*•\s*/g, "<br><span style='display:block; margin-left:20px;'>• ")  // Main bullets
+  .replace(/\n\s*-\s*/g, "<br><span style='display:block; margin-left:40px;'>- ")  // Sub-bullets
+  .replace(/\n\s*●\s*/g, "<br><span style='display:block; margin-left:20px;'>● ")  // Alt bullets
+  .replace(/\n/g, "<br>")  // Remaining line breaks
+  .replace(/(<br>)?((•|-|●)[^<]*)/g, "$1$2</span>");  // Close spans properly
+ 
+ 
+ 
+messageText.innerHTML = formattedMsg;
+ 
+        const muteBtn = document.createElement("button");
+        muteBtn.textContent = "🔊";
+        muteBtn.style.marginLeft = "10px";
+        muteBtn.style.border = "none";
+        muteBtn.style.background = "none";
+        muteBtn.style.cursor = "pointer";
+        muteBtn.style.fontSize = "18px";
+        muteBtn.title = "Mute this response";
+ 
+        let isMuted = false;
+        let utterance = new SpeechSynthesisUtterance(msg);
+        utterance.lang = 'en-US';
+        speechSynthesis.speak(utterance);
+ 
+        muteBtn.addEventListener("click", () => {
+          if (!isMuted) {
+            speechSynthesis.cancel();
+            isMuted = true;
+            muteBtn.textContent = "🔇";
+          } else {
+            isMuted = false;
+            utterance = new SpeechSynthesisUtterance(msg);
+            utterance.lang = 'en-US';
+            speechSynthesis.speak(utterance);
+            muteBtn.textContent = "🔊";
+          }
+        });
+ 
+        msgElem.appendChild(messageText);
+        msgElem.appendChild(muteBtn);
+      } else {
+        msgElem.textContent = msg;
+      }
+ 
+      chatBox.appendChild(msgElem);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+ 
+    async function askTeacherBot() {
+      const question = questionInput.value.trim();
+const fileValue = fileSelect.value;
+if (!question || !fileValue.includes("||")) return;
+
+const [category, file] = fileValue.split("||");  // ✅ extract class/subject and file
+
+appendMessage(question, "user");
+questionInput.value = "";
+
+try {
+  const res = await fetch("http://localhost:8000/ask/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ question, category, file }),
+  });
+
+ 
+        const data = await res.json();
+        appendMessage(data.answer || "No answer found.", "bot");
+      } catch {
+        appendMessage("Error communicating with server.", "bot");
+      }
+    }
+ 
+    sendBtn.addEventListener("click", askTeacherBot);
+ 
+    if (micBtn && questionInput && 'webkitSpeechRecognition' in window) {
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+ 
+      micBtn.addEventListener("click", () => {
+        recognition.start();
+        micBtn.innerText = "🎙️";
+      });
+ 
+      recognition.onresult = (event) => {
+        questionInput.value = event.results[0][0].transcript;
+        askTeacherBot();
+        micBtn.innerText = "🎤";
+      };
+ 
+      recognition.onerror = () => { micBtn.innerText = "🎤"; };
+      recognition.onend = () => { micBtn.innerText = "🎤"; };
+    }
+ 
+    // Load categories/files
+   document.addEventListener("DOMContentLoaded", async () => {
+  const fileSelect = document.getElementById("fileSelect");
+
+  const userGrade = localStorage.getItem("userGrade") || "";
+  const userSubject = localStorage.getItem("userSubject") || "";
+  const folderKey = `class_${userGrade}/${userSubject}`;
+
+  try {
+    const res = await fetch("http://localhost:8000/uploaded_files/");
+    const data = await res.json();
+
+    fileSelect.innerHTML = "<option value=''>-- Select File --</option>";
+
+    console.log("Looking for folder:", folderKey);
+    console.log("Backend returned folders:", Object.keys(data.files_by_category));
+
+    if (data.files_by_category[folderKey]) {
+      data.files_by_category[folderKey].forEach(file => {
+        const opt = document.createElement("option");
+        opt.value = `${folderKey}||${file}`;
+        opt.textContent = file;
+        fileSelect.appendChild(opt);
+      });
+    } else {
+      const opt = document.createElement("option");
+      opt.disabled = true;
+      opt.textContent = "No files available for your class and subject.";
+      fileSelect.appendChild(opt);
+    }
+  } catch (err) {
+    console.error("Error fetching files:", err);
+    const opt = document.createElement("option");
+    opt.disabled = true;
+    opt.textContent = "Error loading files.";
+    fileSelect.appendChild(opt);
+  }
+  speechSynthesis.cancel();
+ 
+});
+
+      // Cancel speech on page unload/navigation
+  window.addEventListener("beforeunload", () => {
+    speechSynthesis.cancel();
+  });
+ 
+  // Also cancel on sidebar link clicks
+  document.querySelectorAll(".nav-links a, .bottom-links a").forEach(link => {
+    link.addEventListener("click", () => {
+      speechSynthesis.cancel();
+    });
+  });
+  </script>
+ 
+</body>
+</html>
