@@ -885,7 +885,7 @@ async def upload_student_assessment(file: UploadFile = File(...), category: str 
         import fitz  # PyMuPDF
 
         # SET PATH FOR WINDOWS
-        pytesseract.pytesseract.tesseract_cmd = r"C:\Users\Sheebam\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+        pytesseract.pytesseract.tesseract_cmd = r"C:\Users\Sowmyashree\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
 
         temp_dir = tempfile.mkdtemp()
         input_path = os.path.join(temp_dir, file.filename)

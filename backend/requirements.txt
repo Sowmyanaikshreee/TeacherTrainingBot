@@ -20,3 +20,4 @@ sentence-transformers
 faiss-cpu
 youtube-transcript-api
 pytesseract
+motor
