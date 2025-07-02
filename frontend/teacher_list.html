@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>List Users (Teachers / Admins)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to right, #4a9bd8, #66c2ff);
+      padding: 12px 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: white;
+      padding: 4px;
+    }
+
+    .nav-links a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 100%;
+      height: 2px;
+      background: white;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      transform: scaleX(1);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      background: white;
+      color: #4a9bd8;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: #ffffffcc;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      text-align: center;
+      color: #012141;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #4a9bd8;
+      color: white;
+    }
+
+    tr:hover {
+      background: #f9fbff;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      width: 320px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #4a9bd8, #66c2ff);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 8px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .back-btn {
+      background: transparent;
+      color: #4a9bd8;
+      border: 2px solid #4a9bd8;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 10px;
+      box-shadow: none;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      margin-bottom: 15px;
+      display: inline-block;
+    }
+
+    .back-btn:hover {
+      background: #eaf4fc;
+      color: #357ab8;
+      transform: translateY(-1px);
+    }
+
+    
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">
+      <img src="images/Aibot 1.jpg" alt="Bot Logo" />
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="#">About</a>
+      <a href="#">Services</a>
+    </nav>
+    <div class="buttons">
+      <a href="admin_login.html" class="btn"><i class="fas fa-user-shield"></i> Admin</a>
+      <a href="user_login.html" class="btn"><i class="fas fa-user-graduate"></i> User</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <a href="upload.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Upload</a>
+    <h2><i class="fas fa-users" style="color: #4a9bd8; margin-right: 8px;"></i>Teacher List</h2>
+
+    <table id="teacherTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Grade</th>
+          <th>Subject</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div id="updateModal" class="modal">
+    <div class="modal-content">
+      <h3>Update Teacher</h3>
+      <input id="updId" type="hidden" />
+      <input id="updName" placeholder="Name" />
+      <input id="updEmail" placeholder="Email" />
+      <input id="updGrade" placeholder="Grade" />
+      <input id="updSubject" placeholder="Subject" />
+      <button onclick="submitUpdate()">Submit</button>
+      <button onclick="closeModal()" style="background: #ccc; color: #333;">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    async function fetchTeachers() {
+      const res = await fetch("http://localhost:8000/list_users?role=teacher");
+      const teachers = await res.json();
+      const tbody = document.querySelector("#teacherTable tbody");
+      tbody.innerHTML = "";
+
+      teachers.forEach(t => {
+        const row = `
+          <tr>
+            <td>${t.id}</td>
+            <td>${t.name}</td>
+            <td>${t.email}</td>
+            <td>${t.grade}</td>
+            <td>${t.subject}</td>
+            <td>
+              <button onclick="deleteTeacher('${t.id}')"><i class="fas fa-trash"></i></button>
+              <button onclick="openUpdateModal('${t.id}', '${t.name}', '${t.email}', '${t.grade}', '${t.subject}')"><i class="fas fa-edit"></i></button>
+            </td>
+          </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    async function deleteTeacher(id) {
+      const form = new FormData();
+      form.append("id", id);
+      await fetch("http://localhost:8000/delete_user/", {
+        method: "POST",
+        body: form
+      });
+      fetchTeachers();
+    }
+
+    function openUpdateModal(id, name, email, grade, subject) {
+      document.getElementById("updId").value = id;
+      document.getElementById("updName").value = name;
+      document.getElementById("updEmail").value = email;
+      document.getElementById("updGrade").value = grade;
+      document.getElementById("updSubject").value = subject;
+      document.getElementById("updateModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("updateModal").style.display = "none";
+    }
+
+    function submitUpdate() {
+      const id = document.getElementById("updId").value;
+      const metadata = {
+        role: "teacher",
+        name: document.getElementById("updName").value,
+        email: document.getElementById("updEmail").value,
+        grade: document.getElementById("updGrade").value,
+        subject: document.getElementById("updSubject").value
+      };
+
+      fetch("http://localhost:8000/update_user/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, metadata })
+      }).then(() => {
+        closeModal();
+        fetchTeachers();
+      });
+    }
+
+    window.onload = fetchTeachers;
+  </script>
+
+</body>
+</html>

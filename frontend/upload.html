@@ -222,6 +222,27 @@
         flex-direction: column;
       }
     }
+        .list-user-btn {
+      background: transparent;
+      color: #4a9bd8;
+      border: 2px solid #4a9bd8;
+      border-radius: 10px;
+      padding: 8px 18px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      margin: 20px 40px;
+      transition: all 0.3s ease;
+      box-shadow: none;
+    }
+
+    .list-user-btn:hover {
+      background: #eaf4fc;
+      color: #357ab8;
+      transform: translateY(-1px);
+    }
   </style>
 </head>
  
@@ -232,8 +253,7 @@
     </div>
     <nav class="nav-links">
       <a href="index.html">Home</a>
-      <a href="#features">About</a>
-      <a href="#contact">Contact Us</a>
+      
     </nav>
     <div class="buttons">
       <a href="admin_login.html" class="btn"><i class="fas fa-user-shield"></i> Admin</a>
@@ -241,18 +261,38 @@
     </div>
   </header>
  
+    <a href="teacher_list.html" class="list-user-btn">
+      <i class="fas fa-user-cog"></i> List Teacher
+    </a>
+
+    <a href="admin_list.html" class="list-user-btn">
+      <i class="fas fa-user-cog"></i> List Admin
+    </a>
+
+ 
   <div class="container">
     <h2><i class="fas fa-file-upload" style="color: #667eea; margin-right: 10px;"></i>Upload PDF by Class</h2>
  
     <label for="classSelect">Select Category:</label>
     <select id="classSelect">
+      <option value="">-- Select Class --</option>
+      <option value="class_1">Class 1</option>
+      <option value="class_2">Class 2</option>
+      <option value="class_3">Class 3</option>
+      <option value="class_4">Class 4</option>
+      <option value="class_5">Class 5</option>
+      <option value="class_6">Class 6</option>
+      <option value="class_7">Class 7</option>
       <option value="class_8">Class 8</option>
       <option value="class_9">Class 9</option>
       <option value="class_10">Class 10</option>
+      <option value="class_11">Class 11</option>
+      <option value="class_12">Class 12</option>
     </select>
 
     <label for="subjectSelect">Select Subject:</label>
     <select id="subjectSelect">
+      <option value="">-- Select Class --</option>
       <option value="Maths">Maths</option>
       <option value="Science">Science</option>
       <option value="ComputerScience">Computer Science</option>
@@ -269,9 +309,18 @@
     <label for="filterClass">Filter by Class:</label>
     <select id="filterClass" onchange="filterFiles()">
       <option value="">-- All Classes --</option>
+      <option value="class_1">Class 1</option>
+      <option value="class_2">Class 2</option>
+      <option value="class_3">Class 3</option>
+      <option value="class_4">Class 4</option>
+      <option value="class_5">Class 5</option>
+      <option value="class_6">Class 6</option>
+      <option value="class_7">Class 7</option>
       <option value="class_8">Class 8</option>
       <option value="class_9">Class 9</option>
       <option value="class_10">Class 10</option>
+      <option value="class_11">Class 11</option>
+      <option value="class_12">Class 12</option>
     </select>
   </div>
   <div style="flex: 1;">

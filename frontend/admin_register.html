@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin Login</title>
+  <title>Admin Registration</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
@@ -10,7 +10,7 @@
       font-family: 'Segoe UI', sans-serif;
       background: #f4f7fa;
     }
- 
+
     .navbar {
       display: flex;
       justify-content: space-between;
@@ -19,7 +19,7 @@
       padding: 12px 40px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
- 
+
     .logo img {
       width: 70px;
       height: 70px;
@@ -27,7 +27,7 @@
       background-color: white;
       padding: 4px;
     }
- 
+
     .nav-links a {
       margin: 0 15px;
       text-decoration: none;
@@ -35,7 +35,7 @@
       font-weight: bold;
       position: relative;
     }
- 
+
     .nav-links a::after {
       content: '';
       position: absolute;
@@ -47,16 +47,16 @@
       transform: scaleX(0);
       transition: transform 0.3s ease;
     }
- 
+
     .nav-links a:hover::after {
       transform: scaleX(1);
     }
- 
+
     .buttons {
       display: flex;
       gap: 12px;
     }
- 
+
     .btn-nav {
       background: white;
       color: #4a9bd8;
@@ -72,18 +72,18 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
     }
- 
+
     .btn-nav:hover {
       background: #f0f0f0;
       transform: translateY(-2px);
     }
- 
+
     .main {
       display: flex;
       flex-wrap: wrap;
       height: calc(100vh - 100px);
     }
- 
+
     .left {
       flex: 1;
       display: flex;
@@ -92,12 +92,12 @@
       background: #fff;
       padding: 30px;
     }
- 
+
     .left img {
       max-width: 100%;
       height: auto;
     }
- 
+
     .right {
       flex: 1;
       display: flex;
@@ -106,8 +106,8 @@
       background: #f4f7fa;
       padding: 30px;
     }
- 
-    .login-box {
+
+    .register-box {
       background: #fff;
       padding: 40px;
       width: 100%;
@@ -117,24 +117,24 @@
       border: 2px solid #4a90e2;
       box-sizing: border-box;
     }
- 
-    .login-box h2 {
+
+    .register-box h2 {
       margin-bottom: 8px;
       font-size: 24px;
       color: #222;
     }
- 
-    .login-box p {
+
+    .register-box p {
       font-size: 14px;
       color: #777;
       margin-bottom: 24px;
     }
- 
+
     .form-group {
       position: relative;
       margin-bottom: 20px;
     }
- 
+
     .form-group input {
       width: 100%;
       padding: 12px 36px 12px 36px;
@@ -145,11 +145,11 @@
       outline: none;
       transition: border-color 0.3s ease;
     }
- 
+
     .form-group input:focus {
       border-color: #4a90e2;
     }
- 
+
     .form-group i {
       position: absolute;
       left: 12px;
@@ -158,7 +158,7 @@
       color: #4a90e2;
       font-size: 16px;
     }
- 
+
     .btn {
       width: 100%;
       padding: 12px;
@@ -169,67 +169,43 @@
       border-radius: 6px;
       cursor: pointer;
     }
- 
+
     .btn:hover {
       background: #357ac9;
     }
- 
-    .divider {
-      text-align: center;
-      margin: 16px 0;
-      font-size: 14px;
-      color: #888;
-    }
- 
-    .google-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #fff;
-    }
- 
-    .google-btn img {
-      width: 18px;
-      margin-left: 8px;
-    }
- 
+
     .signup {
       margin-top: 18px;
       font-size: 14px;
       color: #555;
       text-align: center;
     }
- 
+
     .signup a {
       color: #4a90e2;
       text-decoration: none;
       font-weight: bold;
     }
- 
+
     @media (max-width: 768px) {
       .main {
         flex-direction: column;
         height: auto;
       }
-     
- 
+
       .left, .right {
         flex: none;
         width: 100%;
       }
- 
-      .login-box {
+
+      .register-box {
         padding: 30px 20px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
+
   <header class="navbar">
     <div class="logo">
       <img src="images/Aibot 1.jpg" alt="Bot Logo" />
@@ -244,67 +220,80 @@
       <a href="user_login.html" class="btn-nav"><i class="fas fa-user-graduate"></i> User</a>
     </div>
   </header>
- 
+
   <div class="main">
     <div class="left">
-      <img src="images/admin.jpg" alt="AI Assistant Illustration">
+      <img src="images/admin.jpg" alt="Admin Illustration">
     </div>
     <div class="right">
-      <div class="login-box">
-        <form onsubmit="return validateLogin(event)">
-          <h2>Admin Log in</h2>
-          <p>Teach using the Power of Generative AI</p>
+      <div class="register-box">
+        <form id="adminRegisterForm">
+          <h2>Admin Registration</h2>
+          <p>Create your admin account</p>
+          <div class="form-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="name" placeholder="Full Name" required>
+          </div>
           <div class="form-group">
             <i class="fas fa-envelope"></i>
-            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="email" id="email" placeholder="Email" required>
           </div>
           <div class="form-group">
             <i class="fas fa-key"></i>
-            <input type="password" id="password" name="password" placeholder="Password" required>
+            <input type="password" id="password" placeholder="Password" required>
           </div>
-          <button type="submit" class="btn">Sign in</button>
+          <div class="form-group">
+            <i class="fas fa-key"></i>
+            <input type="password" id="confirm" placeholder="Re-type Password" required>
+          </div>
+          <button type="submit" class="btn">Register</button>
         </form>
-        <div class="divider"></div>
- 
- 
         <div class="signup">
-          New member? <a href="admin_register.html">Sign up</a>
+          Already registered? <a href="admin_login.html">Log in</a>
         </div>
       </div>
     </div>
   </div>
- 
-<script>
-  async function validateLogin(event) {
-    event.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+  <script>
+    document.getElementById("adminRegisterForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirm = document.getElementById("confirm").value;
 
-    try {
-      const res = await fetch("http://localhost:8000/login_admin/", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert("✅ Login successful!");
-        window.location.href = "upload.html"; // or your admin dashboard
-      } else {
-        alert("❌ " + (data.message || "Invalid credentials."));
+      if (password !== confirm) {
+        alert("❌ Passwords do not match!");
+        return;
       }
-    } catch (error) {
-      console.error(error);
-      alert("❌ Failed to connect to server.");
-    }
-  }
-</script>
+
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("password", password);
+
+      try {
+        const res = await fetch("http://localhost:8000/register_admin/", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert("✅ Admin registered successfully!");
+          window.location.assign("admin_login.html");
+        } else {
+          alert("❌ " + (data.message || "Registration failed."));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ Failed to connect to the server.");
+      }
+    });
+  </script>
 
 </body>
 </html>

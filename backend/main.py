@@ -163,6 +163,7 @@ Answer:
         return {"answer": cleaned}
     except Exception as e:
         return {"answer": f"Error calling Gemini: {e}"}
+        
  
 @app.post("/generate_question/")
 async def generate_question(category: str = Form(...)):
@@ -172,7 +173,7 @@ async def generate_question(category: str = Form(...)):
     combined_text = "\n\n".join(chunk_store)[-3000:]
     prompt = f"""
 You are an educational AI tutor.
-Generate **one** standalone quiz question that tests understanding of the following material.
+Generate **one** standalone question that tests understanding of the following material.
 Do NOT start with 'Based on the document...' or similar.
 === CONTENT START ===
 {combined_text}
