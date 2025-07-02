@@ -11,5 +11,12 @@ python-multipart
 docx2txt
 PyMuPDF>=1.18.0
 fpdf
-
-
+bcrypt==3.2.2
+passlib[bcrypt]
+python-docx
+google-generativeai
+PyPDF2>=3.0.0
+sentence-transformers
+faiss-cpu
+youtube-transcript-api
+pytesseract

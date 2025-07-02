@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
-import shutil
 import re
 import google.generativeai as genai
 from utils import extract_text_from_pdf
@@ -11,11 +10,18 @@ from sentence_transformers import SentenceTransformer
 import faiss
 import numpy as np
 import os
-import uuid, json, os
+import os
+from fastapi import FastAPI
+from admin_routes import router as admin_router
+from teacher_routes import router as teacher_router
+from user_crud_routes import router as crud_router
 
- 
 app = FastAPI()
- 
+
+app.include_router(admin_router)
+app.include_router(teacher_router)
+app.include_router(crud_router)
+
 # CORS setup
 app.add_middleware(
     CORSMiddleware,
@@ -30,11 +36,18 @@ UPLOAD_DIR.mkdir(exist_ok=True)
  
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 dimension = 384
-category_indexes = {}  # category: (faiss index, chunk store)
+category_indexes = {} 
  
 # Gemini API setup
 genai.configure(api_key="AIzaSyDzf2NKO7x3ff28z542P_fwQvqOwgTgjB4")
 model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
+
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+
+Path("profile_photos").mkdir(exist_ok=True)
+app.mount("/profile_photos", StaticFiles(directory="profile_photos"), name="profile_photos")
+
  
 def get_or_create_index(category):
     if category not in category_indexes:
@@ -73,7 +86,7 @@ async def load_documents_on_startup():
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...), category: str = Form(...)):
     try:
-        # Create the nested folder if it doesn't exist
+    
         category_path = UPLOAD_DIR / category
         category_path.mkdir(parents=True, exist_ok=True)
 
@@ -83,7 +96,6 @@ async def upload_file(file: UploadFile = File(...), category: str = Form(...)):
             content = await file.read()
             f.write(content)
 
-        # ✅ Immediately index the uploaded PDF
         text = extract_text_from_pdf(str(file_path))
         if text.strip():
             chunk_and_index(text, category)
@@ -146,9 +158,7 @@ Answer:
         cleaned = re.sub(r"\s*•\s*", "\n• ", cleaned)  # force each bullet to new line
         cleaned = re.sub(r"(Answer:)", r"\1\n\n", cleaned)
  
- 
         cleaned = cleaned.strip()
- 
  
         return {"answer": cleaned}
     except Exception as e:
@@ -214,17 +224,13 @@ async def list_uploaded_files():
         files_by_category[key] = files
     return {"files_by_category": files_by_category}
 
-
-
-
-
 from fastapi.responses import StreamingResponse
 from fpdf import FPDF
 import io
 from collections import defaultdict
 from fpdf import FPDF
 
- 
+
 # --- Utility Functions ---
 def clean_extracted_text(text: str) -> str:
     text = re.sub(r"/[A-Z]+\d+", "", text)
@@ -408,10 +414,8 @@ Return only the question and 4 options in the exact format shown.
     pdf.cell(0, 10, heading_name_line, ln=True)
     pdf.ln(10)
 
-
     pdf.set_font("Arial", size=12)
     question_number = 1
-
 
     for qtype in ["MCQ", "FILL", "SHORT", "LONG"]:
         questions = sectioned_questions.get(qtype, [])
@@ -443,8 +447,6 @@ Return only the question and 4 options in the exact format shown.
         "Content-Disposition": f"attachment; filename=Question_Paper_{category}_{level}.pdf"
     })
 
-
- 
 from fastapi import Query
  
 # ✅ Delete Uploaded File
@@ -459,10 +461,7 @@ async def delete_file(filename: str, category: str):
     except Exception as e:
         return JSONResponse(status_code=500, content={"message": f"Error deleting file: {str(e)}"})
  
-
-
 # Lesson Plan Builder
- 
 from fastapi import Request
 from fastapi.responses import StreamingResponse
 from fpdf import FPDF
@@ -554,8 +553,6 @@ async def generate_lesson_plan_pdf(request: Request):
     except Exception as e:
         print("❌ PDF generation error:", e)
         return JSONResponse(status_code=500, content={"error": f"PDF generation failed: {str(e)}"})
-
-
 
 import requests
 from fastapi import Query
@@ -673,116 +670,6 @@ async def analyze_image(image: UploadFile = File(...), prompt: str = Form(...)):
     except Exception as e:
         return {"description": f"❌ Error analyzing image: {str(e)}"}
  
-from fastapi import FastAPI, UploadFile, File, Form
-import json
-from pathlib import Path
-from passlib.hash import bcrypt
-from fastapi.responses import JSONResponse
- 
-TEACHER_FILE = Path("teachers.json")
- 
-def load_teachers():
-    if not TEACHER_FILE.exists():
-        return []
-    with open(TEACHER_FILE, "r") as f:
-        content = f.read().strip()
-        return json.loads(content) if content else []
- 
-@app.post("/register_teacher/")
-async def register_teacher(
-    name: str = Form(...),
-    email: str = Form(...),
-    password: str = Form(...),
-    grade: str = Form(...),
-    subject: str = Form(...)
-):
-    teachers = load_teachers()
- 
-    if any(t["email"] == email for t in teachers):
-        return JSONResponse(status_code=400, content={"message": "Email already registered."})
- 
-    hashed_password = bcrypt.hash(password)
- 
-    new_teacher = {
-        "name": name,
-        "email": email,
-        "password": hashed_password,
-        "grade": grade,
-        "subject": subject
-    }
- 
-    teachers.append(new_teacher)
-    with open(TEACHER_FILE, "w") as f:
-        json.dump(teachers, f, indent=2)
- 
-    return {"message": f"Teacher {name} registered successfully!"}
- 
-@app.post("/login_teacher/")
-async def login_teacher(email: str = Form(...), password: str = Form(...)):
-    teachers = load_teachers()
- 
-    user = next((t for t in teachers if t["email"] == email), None)
- 
-    if user and bcrypt.verify(password, user["password"]):
-        return {
-            "message": f"Welcome back, {user['name']}!",
-            "name": user["name"],
-            "email": user["email"],
-            "grade": user["grade"],
-            "subject": user["subject"]
-        }
- 
-    return JSONResponse(status_code=400, content={"message": "Invalid credentials."})
- 
-@app.post("/update_profile/")
-def update_profile(
-    email: str = Form(...),
-    name: str = Form(...),
-    grade: str = Form(...),
-    subject: str = Form(...),
-    current_password: str = Form(...),
-    new_password: str = Form(...),
-):
-    teachers = load_teachers()
-    for teacher in teachers:
-        if teacher["email"].lower() == email.lower():
-            if not bcrypt.verify(current_password, teacher["password"]):
-                return JSONResponse(status_code=401, content={"message": "❌ Current password is incorrect."})
- 
-            teacher["name"] = name
-            teacher["grade"] = grade
-            teacher["subject"] = subject
- 
-            if new_password:  # only hash and set if new password is provided
-                teacher["password"] = bcrypt.hash(new_password)
- 
-            with open(TEACHER_FILE, "w") as f:
-                json.dump(teachers, f, indent=2)
- 
-            print("✅ Profile updated for:", email)
-            return {"message": "Profile updated successfully."}
- 
-    return JSONResponse(status_code=404, content={"message": "❌ Teacher not found."})
- 
-# === Ensure profile photo directory exists ===
-Path("profile_photos").mkdir(exist_ok=True)
- 
-# === Mount static folder ===
-app.mount("/profile_photos", StaticFiles(directory="profile_photos"), name="profile_photos")
- 
-@app.post("/upload_profile_photo/")
-async def upload_profile_photo(email: str = Form(...), photo: UploadFile = File(...)):
-    photo_dir = Path("profile_photos")
-    filename = email.replace("@", "_").replace(".", "_") + ".jpg"
-    file_path = photo_dir / filename
- 
-    with open(file_path, "wb") as f:
-        shutil.copyfileobj(photo.file, f)
- 
-    return {"url": f"/profile_photos/{filename}"}
- 
-
-
 @app.post("/chat/")
 async def general_chat(question: str = Form(...)):
     prompt = f"You are a helpful, friendly AI tutor. Answer the following question in a clear, student-friendly way:\n\n{question}\n\nAnswer:"
@@ -792,8 +679,6 @@ async def general_chat(question: str = Form(...)):
         return {"answer": response.text.strip()}
     except Exception as e:
         return {"answer": f"Error: {e}"}
-
-
 
 
 @app.post("/generate_text")
@@ -979,15 +864,11 @@ Return only the question and 4 options in the exact format shown.
     output_lines.insert(0, heading_name_line)
     output_lines.insert(0, main_title)
 
-
-
     return {"text": "\n".join(output_lines).strip()}
 
-
 # Upload Assessment part
-
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r"C:\Users\Sowmyashree\AppData\Local\Programs\Tesseract-OCR"
+pytesseract.pytesseract.tesseract_cmd = r"C:\Users\Sheebam\AppData\Local\Programs\Tesseract-OCR"
 from PIL import Image
 import fitz  # PyMuPDF for PDF image extraction
 
@@ -1004,7 +885,7 @@ async def upload_student_assessment(file: UploadFile = File(...), category: str 
         import fitz  # PyMuPDF
 
         # SET PATH FOR WINDOWS
-        pytesseract.pytesseract.tesseract_cmd = r"C:\Users\Sowmyashree\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+        pytesseract.pytesseract.tesseract_cmd = r"C:\Users\Sheebam\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
 
         temp_dir = tempfile.mkdtemp()
         input_path = os.path.join(temp_dir, file.filename)
@@ -1080,4 +961,3 @@ Return the feedback as plain text.
         import traceback
         traceback.print_exc()  # Print full error in terminal
         return JSONResponse(status_code=500, content={"error": str(e)})
-
