@@ -222,6 +222,27 @@
         flex-direction: column;
       }
     }
+        .list-user-btn {
+      background: transparent;
+      color: #4a9bd8;
+      border: 2px solid #4a9bd8;
+      border-radius: 10px;
+      padding: 8px 18px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      margin: 20px 40px;
+      transition: all 0.3s ease;
+      box-shadow: none;
+    }
+
+    .list-user-btn:hover {
+      background: #eaf4fc;
+      color: #357ab8;
+      transform: translateY(-1px);
+    }
   </style>
 </head>
  
@@ -240,6 +261,15 @@
       <a href="user_login.html" class="btn"><i class="fas fa-user-graduate"></i> User</a>
     </div>
   </header>
+ 
+    <a href="teacher_list.html" class="list-user-btn">
+      <i class="fas fa-user-cog"></i> List Teacher
+    </a>
+
+    <a href="admin_list.html" class="list-user-btn">
+      <i class="fas fa-user-cog"></i> List Admin
+    </a>
+
  
   <div class="container">
     <h2><i class="fas fa-file-upload" style="color: #667eea; margin-right: 10px;"></i>Upload PDF by Class</h2>

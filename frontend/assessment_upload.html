@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Upload Student Assessment</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100vh;
+      background: #4a90e2;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar .profile {
+      text-align: center;
+    }
+
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      border: 3px solid white;
+    }
+
+    .profile h3 {
+      font-size: 18px;
+    }
+
+    .profile p {
+      font-size: 13px;
+      color: #dceeff;
+    }
+
+    .nav-links {
+      margin-top: 30px;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 12px 16px;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .nav-links a.active,
+    .nav-links a:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+
+    .bottom-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-link {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .btn-link:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+
+    .main-content {
+      margin-left: 260px;
+      padding: 30px;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: auto;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 25px;
+      background-color: #4a90e2;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #357bd8;
+    }
+
+    #processing {
+      margin-top: 20px;
+      text-align: center;
+      font-style: italic;
+      display: none;
+    }
+
+    #pdfPreview {
+      margin-top: 30px;
+      display: none;
+      width: 100%;
+      height: 500px;
+      border: 1px solid #ccc;
+    }
+
+    #downloadBtn {
+      display: none;
+      margin-top: 20px;
+      background-color: #3dbf5c;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div>
+      <div class="profile">
+        <img id="profile-photo" src="" alt="User" onerror="this.src='images/Aibot 1.jpg'" />
+        <h3 id="profile-name">User Name</h3>
+        <p id="profile-grade">Grade</p>
+        <p id="profile-subject">Subject</p>
+        <p id="profile-email">Email</p>
+      </div>
+      <div class="nav-links">
+        <a href="userHome.html"><i class="fas fa-home"></i> Home</a>
+        <a href="ai_chatbot.html"><i class="fas fa-robot"></i> AI Chatbot</a>
+        <a href="whiteBoard.html"><i class="fas fa-edit"></i> Whiteboards</a>
+        
+        
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="profile.html" class="btn-link"><i class="fas fa-user-circle"></i> Profile</a>
+      <a href="index.html" class="btn-link"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <h2>📄 Upload Student Assessment</h2>
+
+      <label for="file">Select Answer Sheet (Image or PDF)</label>
+      <input type="file" id="file" accept=".png,.jpg,.jpeg,.pdf" required />
+
+      <label for="category">Select Class/Subject Folder</label>
+      <select id="category" required>
+        <option value="">-- Select --</option>
+      </select>
+
+      <button onclick="submitAssessment()">📤 Upload and Get Feedback</button>
+
+      <div id="processing">⏳ Processing, please wait...</div>
+
+      <iframe id="pdfPreview"></iframe>
+
+      <button id="downloadBtn">⬇️ Download Feedback PDF</button>
+    </div>
+  </main>
+
+  <!-- Sidebar Profile Script -->
+  <script>
+    const email = localStorage.getItem("userEmail") || "";
+    const emailSafe = email.replace(/[@.]/g, "_");
+    const imageUrl = `http://localhost:8000/profile_photos/${emailSafe}.jpg`;
+
+    document.getElementById("profile-name").innerText = localStorage.getItem("userName") || "User";
+    document.getElementById("profile-grade").innerText = "Grade: " + (localStorage.getItem("userGrade") || "-");
+    document.getElementById("profile-subject").innerText = "Subject: " + (localStorage.getItem("userSubject") || "-");
+    document.getElementById("profile-email").innerText = email || "-";
+    document.getElementById("profile-photo").src = imageUrl;
+
+    async function loadCategories() {
+      const res = await fetch("http://localhost:8000/uploaded_files/");
+      const data = await res.json();
+      const dropdown = document.getElementById("category");
+
+      for (const cat in data.files_by_category) {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+        dropdown.appendChild(option);
+      }
+    }
+
+    async function submitAssessment() {
+      const fileInput = document.getElementById("file");
+      const category = document.getElementById("category").value;
+      const processing = document.getElementById("processing");
+      const preview = document.getElementById("pdfPreview");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      if (!fileInput.files.length || !category) {
+        alert("Please select a file and category.");
+        return;
+      }
+
+      processing.style.display = "block";
+      preview.style.display = "none";
+      downloadBtn.style.display = "none";
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      formData.append("category", category);
+
+      try {
+        const res = await fetch("http://localhost:8000/upload_student_assessment/", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          alert("❌ Error: " + (err.error || "Something went wrong."));
+          processing.style.display = "none";
+          return;
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        preview.src = url;
+        preview.style.display = "block";
+
+        downloadBtn.style.display = "block";
+        downloadBtn.onclick = () => {
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "Student_Feedback.pdf";
+          a.click();
+        };
+
+        processing.style.display = "none";
+
+      } catch (e) {
+        console.error("Upload error:", e);
+        alert("Unexpected error. Check console for details.");
+        processing.style.display = "none";
+      }
+    }
+
+    loadCategories();
+  </script>
+</body>
+</html>
